@@ -1,8 +1,9 @@
 #MountainProjectScraper.py
 
 import requests
-from bs4 import BeautifulSoup
 import re
+from bs4 import BeautifulSoup
+from datetime import datetime
 
 class MountainScraper(object):
 	def __init__(self, statesToScrape: any((None, list[str]))) -> None:
@@ -34,9 +35,10 @@ class MountainScraper(object):
 
 		routes = {route.text : route["href"] for route in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a") if route["href"] != "#"}
 
-		print(areaId, "\r\n", routes)
+
 
 		for route, url in routes.items():
+			print(route + ": " + url)
 			routeId = int(re.search(pattern=r"\d+", string=url).group(0))
 			self.findRouteTicks(routeId, url)
 
@@ -46,9 +48,41 @@ class MountainScraper(object):
 	def findRouteTicks(self, routeId: int, url: str) -> None:
 		url = url.replace("/route/", "/route/stats/")
 		soup = BeautifulSoup(requests.get(url).text, "html.parser")
-		pattern = re.compile(r"Ticks\s*")
-		ticks = soup.find("h2", text=pattern)
-		print(ticks)
+		pattern = re.compile(r"Ticks ")
+		ticksTable = soup.find(class_="col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
+
+		if ticksTable is None:
+			return
+
+		tickCount = int(re.search(pattern=r"\d+", string=ticksTable.find("h3").text).group(0))
+		print(f"Total ticks: {tickCount}.")
+
+		ticks = ticksTable.find_all("tr")
+		for tick in ticks:
+			userPage = tick.find("a")
+			if userPage is not None:
+				userName = userPage.text
+				userId = int(re.search(pattern=r"\d+", string=userPage["href"]).group(0))
+			else:
+				userName = None
+				userId = None
+
+			# print(userPage.text, userId)
+			tickInfo = tick.find(class_="small max-height max-height-md-120 max-height-xs-120").find("div").text
+			tickInfo = [info.strip() for info in tickInfo.split("·")]
+
+			userTick = {
+				"UserName" : userName,
+				"UserId" : userId,
+				"TickDate" : tickInfo[0],
+				"TickDatetime" : datetime.strptime(tickInfo[0], "%b %d, %Y"),
+				"TickInfo" : None if len(tickInfo) < 2 else tickInfo[1]
+			}
+
+			print("     ", userTick)
+
+
+		# print(ticks)
 
 # test = requests.get("https://www.mountainproject.com/")
 # # print(test.text)
