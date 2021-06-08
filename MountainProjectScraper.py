@@ -82,19 +82,8 @@ class MountainScraper(object):
 			print("     ", userTick)
 
 
-		# print(ticks)
 
-# test = requests.get("https://www.mountainproject.com/")
-# # print(test.text)
-# soup = BeautifulSoup(test.text, "html.parser")
-# route_guide = soup.find(id="route-guide")
-# strong = route_guide.find_all("strong")
-# test = strong[0].find("a")
-# print(test.text)
 
-# test = BeautifulSoup(requests.get("https://www.mountainproject.com/").text, "html.parser").find(id="route-guide").find_all("strong")
-# print(test)
-# print({strong.text : strong["href"] for strong in test})
-
-scraper = MountainScraper(["California"])
-scraper.findSubAreas(scraper.parentAreas)
+if __name__ == "__main__"
+	scraper = MountainScraper(["California"])
+	scraper.findSubAreas(scraper.parentAreas)
