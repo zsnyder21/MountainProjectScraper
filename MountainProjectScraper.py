@@ -84,6 +84,6 @@ class MountainScraper(object):
 
 
 
-if __name__ == "__main__"
+if __name__ == "__main__":
 	scraper = MountainScraper(["California"])
 	scraper.findSubAreas(scraper.parentAreas)
