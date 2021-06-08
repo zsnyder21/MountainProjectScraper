@@ -60,7 +60,7 @@ class MountainScraper(object):
 			# safety = soup.find()
 			# print(grade)
 
-			# self.findRouteTicks(routeId, url)
+			self.findRouteTicks(routeId, url)
 
 			# break
 
@@ -95,7 +95,7 @@ class MountainScraper(object):
 				"UserName" : userName,
 				"UserId" : userId,
 				"TickDate" : tickInfo[0],
-				"TickDatetime" : datetime.strptime(tickInfo[0], "%b %d, %Y"),
+				"TickDatetime" : datetime.strptime(tickInfo[0], "%b %d, %Y") if tickInfo[0].lower() != "-no date-" else None,
 				"TickInfo" : None if len(tickInfo) < 2 else tickInfo[1]
 			}
 
@@ -160,6 +160,8 @@ class MountainScraper(object):
 
 
 if __name__ == "__main__":
-	scraper = MountainScraper(["California"], "https://www.mountainproject.com/area/113804909/southwest-face")
-	# scraper = MountainScraper(["Colorado"], "https://www.mountainproject.com/area/105746940/castle-rocklower-falls-ice")
+	# scraper = MountainScraper(["California"], "https://www.mountainproject.com/area/113804909/southwest-face") # Trad/Aid
+	# scraper = MountainScraper(["Colorado"], "https://www.mountainproject.com/area/105746940/castle-rocklower-falls-ice") # Trad/Ice/Mixed
+	# scraper = MountainScraper(["California"], "https://www.mountainproject.com/area/111951436/andrew-molera-sp-beach") # Bouldering
+	scraper = MountainScraper(["Colorado"], "https://www.mountainproject.com/area/105810437/first-tier") # Sport
 	scraper.findSubordinates(scraper.parentAreas)
