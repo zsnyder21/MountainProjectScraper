@@ -85,6 +85,10 @@ class MountainScraper(object):
 		]
 
 		self.exportToJSON(routeInfo, "Route")
+
+		for route in routeInfo:
+			self.findRouteStats(route["RouteId"], route["URL"], route["ParentAreaId"])
+
 		return None
 
 		routes = {route.text: route["href"] for route in
@@ -114,15 +118,27 @@ class MountainScraper(object):
 
 	# break
 
-	def findRouteTicks(self, routeId: int, url: str) -> None:
+	def findRouteStats(self, routeId: int, url: str, parentAreaId: int) -> None:
 		url = url.replace("/route/", "/route/stats/")
 		soup = BeautifulSoup(requests.get(url).text, "html.parser")
-		pattern = re.compile(r"Ticks ")
-		ticksTable = soup.find(
-			class_="col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
+		# ticksTable = soup.find(
+		# 	class_="col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
 
-		if ticksTable is None:
-			return
+		# if ticksTable is None:
+		# 	return
+
+		routeStats = [
+			{
+				"RouteId": routeId,
+				"ParentAreaId": parentAreaId,
+				"URL": url,
+				"HTML": requests.get(url).text
+			}
+		]
+
+		self.exportToJSON(routeStats, "Stats")
+
+		return
 
 		tickCount = int(re.search(pattern=r"\d+", string=ticksTable.find("h3").text).group(0))
 		print(f"Total ticks: {tickCount}.")
@@ -163,8 +179,8 @@ class MountainScraper(object):
 			file = open("./data/Routes.json", "a")
 			print(jsonContent, file=file)
 
-		if dataType.upper() == "Ticks".upper():
-			file = open("./data/Ticks.json", "a")
+		if dataType.upper() == "Stats".upper():
+			file = open("./data/Stats.json", "a")
 			print(jsonContent, file=file)
 
 		file.close()
@@ -236,5 +252,5 @@ if __name__ == "__main__":
 	# scraper = MountainScraper("https://www.mountainproject.com/area/105877031/mount-rainier") # Snow
 	# print(scraper.parentAreas)
 
-	scraper = MountainScraper("https://www.mountainproject.com/area/118097922/valley-south-side")
+	scraper = MountainScraper()
 	scraper.findSubordinates(scraper.parentAreas)
