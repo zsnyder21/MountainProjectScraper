@@ -56,16 +56,22 @@ class MountainCleaner(object):
 
     @classmethod
     def curateRouteInfo(cls, routeId: int, parentAreaId: int, routeName: str, routeURL: str, routeTypeInfo: list[str],
-                        difficultyInfo: list[str], ratingInfo: list[str]) -> dict:
-        routeKeys = ["RouteId", "ParentAreaId", "Name", "URL", "Difficulty", "Severity", "Type", "Height", "Pitches", "Grade",
-                     "Rating", "VoteCount"]
+                        difficultyInfo: dict, ratingInfo: list[str]) -> dict:
+        routeKeys = ["RouteId", "ParentAreaId", "Name", "URL", "Difficulty", "Difficulty_ADL", "Severity", "Type",
+                     "Height", "HeightUnits", "Pitches", "Grade", "Rating", "VoteCount"]
         types = {"trad", "sport", "toprope", "boulder", "ice", "aid", "mixed", "alpine"}
         severities = {"G", "PG", "PG13", "PG-13", "R", "X"}
         routeInfo = {"RouteId": routeId, "ParentAreaId": parentAreaId, "Name": routeName, "URL": routeURL,
-                     "Severity": difficultyInfo[-1].strip() if difficultyInfo[-1].strip() in severities else None}
+                     "Difficulty": difficultyInfo["YDS"]}
 
-        routeInfo["Difficulty"] = " ".join([item.strip()
-                                            for item in difficultyInfo if item.strip() != routeInfo["Severity"]])
+        if difficultyInfo["Additional"]:
+            routeInfo["Severity"] = difficultyInfo["Additional"][-1].strip()\
+                if difficultyInfo["Additional"][-1].strip() in severities else None
+        else:
+            routeInfo["Severity"] = None
+
+        routeInfo["Difficulty_ADL"] = " ".join([item.strip() for item in difficultyInfo["Additional"]
+                                                if item and item.strip() != routeInfo["Severity"]])
 
         while routeTypeInfo:
             info = routeTypeInfo.pop(0)
@@ -76,8 +82,10 @@ class MountainCleaner(object):
                 else:
                     routeInfo["Type"] = info.strip()
 
-            if re.match(pattern=r"\d+\sft", string=info.strip().lower()):
-                routeInfo["Height"] = info.strip()
+            if re.match(pattern=r"(\d+\sft|\d+\sm)", string=info.strip().lower()):
+                heightInfo = re.match(pattern=r"(\d+\sft|\d+\sm)", string=info.strip()).group(0).split()
+                routeInfo["Height"] = int(heightInfo[0])
+                routeInfo["HeightUnits"] = heightInfo[1]
 
             if "Pitches".lower() in info.lower():
                 routeInfo["Pitches"] = info.strip()
@@ -91,7 +99,7 @@ class MountainCleaner(object):
         return {key: routeInfo[key] if key in routeInfo.keys() else None for key in routeKeys}
 
     @classmethod
-    def getRouteDifficulty(cls, soup: BeautifulSoup) -> list[str]:
+    def getRouteDifficulty(cls, soup: BeautifulSoup) -> dict:
         difficulty = soup.find(class_="inline-block mr-2")
         difficultyText = difficulty.text.split()
         difficultyChildren = difficulty.findChildren("span")
@@ -100,14 +108,14 @@ class MountainCleaner(object):
         if YDS is not None:
             YDS = YDS.text.split()[0]
         else:
-            YDS = ""
+            YDS = None
 
         if difficultyChildren is not None:
             difficultyToRemove = set(chain(*[child.text.split() for child in difficultyChildren]))
         else:
             difficultyToRemove = []
 
-        return [YDS] + [word for word in difficultyText if word not in difficultyToRemove]
+        return {"YDS": YDS, "Additional": [word for word in difficultyText if word not in difficultyToRemove]}
 
     def cleanStatsInfo(self) -> None:
         file = open(self.filePath, "r", encoding="utf8")
@@ -168,11 +176,11 @@ if __name__ == "__main__":
     # cleaner = MountainCleaner("./data2/Areas.json", "Area", "./data2/Clean/Areas.json")
     # cleaner.clean()
 
-    # cleaner = MountainCleaner("./data2/Routes.json", "Route", "./data2/Clean/Routes.json")
-    # cleaner.clean()
-
-    cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean/Stats.json")
+    cleaner = MountainCleaner("./data2/Routes.json", "Route", "./data2/Clean/Routes.json")
     cleaner.clean()
+
+    # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean/Stats.json")
+    # cleaner.clean()
 
 
     # routes = spark.read.json("./data2/Routes.json")
