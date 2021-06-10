@@ -4,14 +4,6 @@ import json
 import re
 from bs4 import BeautifulSoup
 from itertools import chain
-from datetime import datetime
-# import pyspark as ps
-import os
-
-
-# spark = ps.sql.SparkSession.builder.master("local[8]").appName("MountainCleaner").getOrCreate()
-# sc = spark.sparkContext
-# spark.conf.set("spark.sql.caseSensitive", "true")
 
 
 class MountainCleaner(object):
