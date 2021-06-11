@@ -37,22 +37,42 @@ class MountainCleaner(object):
 
     def cleanRouteInfo(self) -> None:
         file = open(self.filePath, "r", encoding="utf8")
+        zeroDataCount = 0
 
         for line in file:
-            fileContents = json.loads(line.strip())
-            routeId = fileContents["RouteId"]
-            parentAreaId = fileContents["ParentAreaId"]
-            routeURL = fileContents["URL"]
+            # try:
+                fileContents = json.loads(line.strip())
+                routeId = fileContents["RouteId"]
+                parentAreaId = fileContents["ParentAreaId"]
+                routeURL = fileContents["URL"]
 
-            soup = BeautifulSoup(fileContents["HTML"], "html.parser")
-            routeTypeInfo = soup.find(class_="description-details").find("tr").text.split(":")[1].strip().split(",")
-            difficultyInfo = self.getRouteDifficulty(soup)
-            ratingInfo = soup.find(id=f"starsWithAvgText-{routeId}").text.split()[1:4:2]
-            routeName = soup.find("h1").text.strip()
+                if not fileContents["HTML"]:
+                    zeroDataCount += 1
+                    continue
 
-            routeInfo = self.curateRouteInfo(routeId, parentAreaId, routeName, routeURL, routeTypeInfo, difficultyInfo, ratingInfo)
+                soup = BeautifulSoup(fileContents["HTML"], "html.parser")
+                routeDetails = soup.find(class_="description-details")
+                if routeDetails is None:
+                    zeroDataCount += 1
+                    continue
 
-            self.exportToJSON(routeInfo)
+                routeTypeInfo = routeDetails.find("tr").text.split(":")[1].strip().split(",")
+                difficultyInfo = self.getRouteDifficulty(soup)
+                if difficultyInfo["YDS"] is None:
+                    zeroDataCount += 1
+                    continue
+                ratingInfo = soup.find(id=f"starsWithAvgText-{routeId}").text.split()[1:4:2]
+                routeName = soup.find("h1").text.strip()
+
+                routeInfo = self.curateRouteInfo(routeId, parentAreaId, routeName, routeURL, routeTypeInfo, difficultyInfo, ratingInfo)
+
+                self.exportToJSON(routeInfo)
+            # except Exception as e:
+            #     print(e)
+            #     print(routeURL)
+                # return
+
+        print(f"Missing data for {zeroDataCount} routes.")
 
     @classmethod
     def curateRouteInfo(cls, routeId: int, parentAreaId: int, routeName: str, routeURL: str, routeTypeInfo: list[str],
@@ -101,12 +121,15 @@ class MountainCleaner(object):
     @classmethod
     def getRouteDifficulty(cls, soup: BeautifulSoup) -> dict:
         difficulty = soup.find(class_="inline-block mr-2")
+        if difficulty is None:
+            return {"YDS": None, "Additional": None}
+
         difficultyText = difficulty.text.split()
         difficultyChildren = difficulty.findChildren("span")
         YDS = difficulty.find(class_="rateYDS")
 
         if YDS is not None:
-            YDS = YDS.text.split()[0]
+            YDS = " ".join(word for word in YDS.text.split() if word.upper() != "YDS")
         else:
             YDS = None
 
@@ -119,12 +142,17 @@ class MountainCleaner(object):
 
     def cleanStatsInfo(self) -> None:
         file = open(self.filePath, "r", encoding="utf8")
+        zeroDataCount = 0
 
         for line in file:
             fileContents = json.loads(line.strip())
             routeId = fileContents["RouteId"]
             parentAreaId = fileContents["ParentAreaId"]
             statsURL = fileContents["URL"]
+
+            if not fileContents["HTML"]:
+                zeroDataCount += 1
+                continue
 
             soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
@@ -134,7 +162,7 @@ class MountainCleaner(object):
             if ticksTable is None:
                 continue
 
-            tickCount = int(re.search(pattern=r"\d+", string=ticksTable.find("h3").text).group(0))
+            # tickCount = int(re.search(pattern=r"\d+", string=ticksTable.find("h3").text).group(0))
             ticks = ticksTable.find_all("tr")
             for tick in ticks:
                 userPage = tick.find("a")
@@ -155,13 +183,15 @@ class MountainCleaner(object):
                     "RouteId": routeId,
                     "ParentAreaId": parentAreaId,
                     "URL": statsURL,
-                    "TickDate": tickInfo[0],
+                    "TickDate": tickInfo[0] if tickInfo[0].lower() != "-no date-" else None,
                     # "TickDatetime": datetime.strptime(tickInfo[0], "%b %d, %Y")
                     # if tickInfo[0].lower() != "-no date-" else None,
                     "TickInfo": None if len(tickInfo) < 2 else tickInfo[1]
                 }
 
                 self.exportToJSON(userTick)
+
+        print(f"Missing route statistics for {zeroDataCount} routes.")
 
     def exportToJSON(self, data: dict) -> None:
         file = open(self.exportPath, "a")
@@ -173,13 +203,13 @@ class MountainCleaner(object):
 
 
 if __name__ == "__main__":
-    # cleaner = MountainCleaner("./data2/Areas.json", "Area", "./data2/Clean/Areas.json")
+    # cleaner = MountainCleaner("./data/Areas.json", "Area", "./data/Clean/Areas.json")
     # cleaner.clean()
-
-    cleaner = MountainCleaner("./data2/Routes.json", "Route", "./data2/Clean/Routes.json")
+    #
+    cleaner = MountainCleaner("./SampleData/Routes.json", "Route", "./SampleData/Clean/Routes.json")
     cleaner.clean()
 
-    # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean/Stats.json")
+    # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean2/Stats.json")
     # cleaner.clean()
 
 
