@@ -1,5 +1,6 @@
 # MountainProjectScraper.py
 
+import os
 import requests
 import re
 import json
@@ -7,8 +8,14 @@ from bs4 import BeautifulSoup
 
 
 class MountainScraper(object):
-	def __init__(self, startingPage: any([None, str]) = None) -> None:
+	def __init__(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./RawData/",
+				 useSubDirs: bool = True) -> None:
 		self.startingPage = startingPage if startingPage is not None else "https://www.mountainproject.com/route-guide"
+		self.outputDirectoryRoot = outputDirectoryRoot
+		self.outputDirectory = outputDirectoryRoot
+		self.useSubDirs = useSubDirs
+
+		os.makedirs(self.outputDirectoryRoot, exist_ok=True)
 
 		if startingPage is None:
 			self.parentAreas = [
@@ -27,13 +34,34 @@ class MountainScraper(object):
 			self.parentAreas = [
 				{
 					"AreaId": int(re.search(pattern=r"\d+", string=self.startingPage).group(0)),
-					"ParentAreaId": -1,  # Not sure what to put here. We could go fetch it...
+					"ParentAreaId": None,  # Not sure what to put here. We could go fetch it...
 					"URL": self.startingPage,
 					"HTML": requests.get(self.startingPage).text
 				}
 			]
 
-		self.exportToJSON(self.parentAreas, "Area")
+		# self.exportToJSON(self.parentAreas, "Area")
+
+	def processParentPages(self) -> None:
+		for area in self.parentAreas:
+			currentAreaId = area["AreaId"]
+			soup = BeautifulSoup(area["HTML"], "html.parser")
+			title = soup.find("h1")
+			children = [child.text.strip() for child in title.findChildren()]
+			areaName = " ".join(word.strip() for word in title.text.split() if word not in children)
+
+			if self.useSubDirs:
+				self.outputDirectory = self.outputDirectoryRoot + \
+									   ("" if self.outputDirectoryRoot[-1] == "/" else "/") + areaName + "/"
+
+				os.makedirs(self.outputDirectory, exist_ok=True)
+
+			areaInfo = [
+				area
+			]
+
+			self.exportToJSON(areaInfo, "Area")
+			self.findSubordinates(areaInfo)
 
 	def findSubordinates(self, parentAreas: list[dict], parentAreaId: any([None, int]) = None) -> None:
 		for area in parentAreas:
@@ -97,14 +125,13 @@ class MountainScraper(object):
 
 		return
 
-	@classmethod
-	def exportToJSON(cls, data: list[dict], dataType: str) -> None:
+	def exportToJSON(self, data: list[dict], dataType: str) -> None:
 		if dataType.upper() == "Area".upper():
-			file = open("./SampleData/Areas.json", "a")
+			file = open(self.outputDirectory + "Areas.json", "a")
 		elif dataType.upper() == "Route".upper():
-			file = open("./SampleData/Routes.json", "a")
+			file = open(self.outputDirectory + "Routes.json", "a")
 		elif dataType.upper() == "Stats".upper():
-			file = open("./SampleData/Stats.json", "a")
+			file = open(self.outputDirectory + "Stats.json", "a")
 		else:
 			return
 
@@ -114,6 +141,7 @@ class MountainScraper(object):
 
 		file.close()
 
+
 if __name__ == "__main__":
 	# scraper = MountainScraper("https://www.mountainproject.com/area/113804909/southwest-face") # Trad/Aid
 	# scraper = MountainScraper("https://www.mountainproject.com/area/105746940/castle-rocklower-falls-ice") # Trad/Ice/Mixed
@@ -122,14 +150,14 @@ if __name__ == "__main__":
 	# scraper = MountainScraper("https://www.mountainproject.com/area/105877031/mount-rainier") # Snow
 	# print(scraper.parentAreas)
 
-	startingPages = [
-		"https://www.mountainproject.com/area/105744267/shelf-road",
-		"https://www.mountainproject.com/area/105744222/boulder-canyon",
-		"https://www.mountainproject.com/area/105833381/yosemite-national-park",
-		"https://www.mountainproject.com/area/105720495/joshua-tree-national-park",
-		"https://www.mountainproject.com/area/105744246/eldorado-canyon-sp"
-	]
+	# startingPages = [
+	# 	"https://www.mountainproject.com/area/105744267/shelf-road",
+	# 	"https://www.mountainproject.com/area/105744222/boulder-canyon",
+	# 	"https://www.mountainproject.com/area/105833381/yosemite-national-park",
+	# 	"https://www.mountainproject.com/area/105720495/joshua-tree-national-park",
+	# 	"https://www.mountainproject.com/area/105744246/eldorado-canyon-sp"
+	# ]
 
-	for startingPage in startingPages:
-		scraper = MountainScraper(startingPage)
-		scraper.findSubordinates(scraper.parentAreas)
+	# for startingPage in startingPages:
+	scraper = MountainScraper(outputDirectoryRoot="./TestFolder/")
+	scraper.processParentPages()
