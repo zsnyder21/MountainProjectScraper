@@ -100,11 +100,11 @@ class MountainScraper(object):
 	@classmethod
 	def exportToJSON(cls, data: list[dict], dataType: str) -> None:
 		if dataType.upper() == "Area".upper():
-			file = open("./RawData/Areas.json", "a")
+			file = open("./SampleData/Areas.json", "a")
 		elif dataType.upper() == "Route".upper():
-			file = open("./RawData/Routes.json", "a")
+			file = open("./SampleData/Routes.json", "a")
 		elif dataType.upper() == "Stats".upper():
-			file = open("./RawData/Stats.json", "a")
+			file = open("./SampleData/Stats.json", "a")
 		else:
 			return
 
@@ -122,5 +122,14 @@ if __name__ == "__main__":
 	# scraper = MountainScraper("https://www.mountainproject.com/area/105877031/mount-rainier") # Snow
 	# print(scraper.parentAreas)
 
-	scraper = MountainScraper()
-	scraper.findSubordinates(scraper.parentAreas)
+	startingPages = [
+		"https://www.mountainproject.com/area/105744267/shelf-road",
+		"https://www.mountainproject.com/area/105744222/boulder-canyon",
+		"https://www.mountainproject.com/area/105833381/yosemite-national-park",
+		"https://www.mountainproject.com/area/105720495/joshua-tree-national-park",
+		"https://www.mountainproject.com/area/105744246/eldorado-canyon-sp"
+	]
+
+	for startingPage in startingPages:
+		scraper = MountainScraper(startingPage)
+		scraper.findSubordinates(scraper.parentAreas)
