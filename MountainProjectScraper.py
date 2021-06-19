@@ -5,42 +5,112 @@ import requests
 import re
 import json
 from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.options import Options
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 
 class MountainScraper(object):
 	def __init__(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./RawData/",
-				 useSubDirs: bool = True) -> None:
+				 areasToScrape: set[str] = None, useSubDirs: bool = True) -> None:
 		self.startingPage = startingPage if startingPage is not None else "https://www.mountainproject.com/route-guide"
 		self.outputDirectoryRoot = outputDirectoryRoot
 		self.outputDirectory = outputDirectoryRoot
+		self.areasToScrape = areasToScrape
+		self.areasScraped = set()
 		self.useSubDirs = useSubDirs
+		self.parentAreas = list()
+
+		chrome_options = Options()
+		chrome_options.add_argument("--headless")
+		self.driver = webdriver.Chrome(options=chrome_options)
 
 		os.makedirs(self.outputDirectoryRoot, exist_ok=True)
 
 		if startingPage is None:
-			self.parentAreas = [
-				{
-					"AreaId": int(re.search(pattern=r"\d+", string=strong.find("a")["href"]).group(0)),
-					"ParentAreaId": None,
-					"URL": strong.find("a")["href"],
-					"HTML": requests.get(strong.find("a")["href"]).text
+			self.driver.get(self.startingPage)
+			routeGuide = BeautifulSoup(requests.get(self.startingPage).text, "html.parser").find(id="route-guide")
+
+			for strong in routeGuide.find_all("strong"):
+				areaName = strong.find("a").text
+				if self.areasToScrape is not None and areaName not in self.areasToScrape or areaName in self.areasScraped:
+					continue
+
+				pageURL = strong.find("a")["href"]
+				areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
+				parentAreaId = None
+
+				self.driver.get(pageURL)
+
+				commentCount = self.driver.find_element_by_class_name("comment-count")
+				hasComments = commentCount.text != "0 Comments"
+
+				if hasComments:
+					html = self.driver.find_element_by_tag_name("html")
+					html.send_keys(Keys.END)
+					WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
+						"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+				pageHTML = self.driver.page_source
+
+				pageInfo = {
+					"AreaId": areaId,
+					"ParentAreaId": parentAreaId,
+					"URL": pageURL,
+					"HTML": pageHTML
 				}
-				for strong in
-				BeautifulSoup(requests.get(self.startingPage, params={}).text, "html.parser").find(id="route-guide")
-					.find_all("strong")
-			]
+				self.areasScraped.add(areaName)
+				self.parentAreas.append(pageInfo)
+
+			# self.parentAreas = [
+			# 	{
+			# 		"AreaId": int(re.search(pattern=r"\d+", string=strong.find("a")["href"]).group(0)),
+			# 		"ParentAreaId": None,
+			# 		"URL": strong.find("a")["href"],
+			# 		"HTML": requests.get(strong.find("a")["href"]).text
+			# 	}
+			# 	for strong in routeGuide.find_all("strong")
+			# 	if self.areasToScrape is None or strong.find("a").text in self.areasToScrape
+			# ]
 
 		else:
-			self.parentAreas = [
-				{
-					"AreaId": int(re.search(pattern=r"\d+", string=self.startingPage).group(0)),
-					"ParentAreaId": None,  # Not sure what to put here. We could go fetch it...
-					"URL": self.startingPage,
-					"HTML": requests.get(self.startingPage).text
-				}
-			]
+			pageURL = self.startingPage
+			areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
+			parentAreaId = None
 
-		# self.exportToJSON(self.parentAreas, "Area")
+			self.driver.get(pageURL)
+
+			commentCount = self.driver.find_element_by_class_name("comment-count")
+			hasComments = commentCount.text != "0 Comments"
+
+			if hasComments:
+				html = self.driver.find_element_by_tag_name("html")
+				html.send_keys(Keys.END)
+				WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
+																					 "//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+			pageHTML = self.driver.page_source
+
+			pageInfo = {
+				"AreaId": areaId,
+				"ParentAreaId": parentAreaId,
+				"URL": pageURL,
+				"HTML": pageHTML
+			}
+
+			self.parentAreas.append(pageInfo)
+
+			# self.parentAreas = [
+			# 	{
+			# 		"AreaId": int(re.search(pattern=r"\d+", string=self.startingPage).group(0)),
+			# 		"ParentAreaId": None,  # Not sure what to put here. We could go fetch it...
+			# 		"URL": self.startingPage,
+			# 		"HTML": requests.get(self.startingPage).text
+			# 	}
+			# ]
 
 	def processParentPages(self) -> None:
 		for area in self.parentAreas:
@@ -54,19 +124,24 @@ class MountainScraper(object):
 				self.outputDirectory = self.outputDirectoryRoot + \
 									   ("" if self.outputDirectoryRoot[-1] == "/" else "/") + areaName + "/"
 
-				os.makedirs(self.outputDirectory, exist_ok=True)
+				try:
+					os.makedirs(self.outputDirectory, exist_ok=False)
+				except FileExistsError as e:
+					print(f"This area (AreaId = {area['AreaId']}) has already been scraped during this session.")
+					continue
 
 			areaInfo = [
 				area
 			]
 
 			self.exportToJSON(areaInfo, "Area")
-			self.findSubordinates(areaInfo)
+			self.findSubordinateAreas(areaInfo, currentAreaId)
 
-	def findSubordinates(self, parentAreas: list[dict], parentAreaId: any([None, int]) = None) -> None:
-		for area in parentAreas:
+	def findSubordinateAreas(self, areas: list[dict], parentAreaId: any([None, int]) = None) -> None:
+		for area in areas:
 			currentAreaId = area["AreaId"]
 			soup = BeautifulSoup(area["HTML"], "html.parser")
+			subAreaInfo = list()
 
 			# Determine if this is an empty area
 			if "This area is empty".upper() in soup.find(class_="mp-sidebar").text.upper():
@@ -78,32 +153,88 @@ class MountainScraper(object):
 			if hasRoutes:
 				self.findRoutes(area, currentAreaId)
 			else:
-				subAreaInfo = [
-					{
-						"AreaId": int(re.search(pattern=r"\d+", string=subArea["href"]).group(0)),
-						"ParentAreaId": currentAreaId,
-						"URL": subArea["href"],
-						"HTML": requests.get(subArea["href"]).text
-					}
-					for subArea in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a")
-				]
-				self.exportToJSON(subAreaInfo, "Area")
+				for subArea in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a"):
+					pageURL = subArea["href"]
+					areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
 
-				self.findSubordinates(subAreaInfo, currentAreaId)
+					self.driver.get(pageURL)
+
+					commentCount = self.driver.find_element_by_class_name("comment-count")
+					hasComments = commentCount.text != "0 Comments"
+
+					if hasComments:
+						html = self.driver.find_element_by_tag_name("html")
+						html.send_keys(Keys.END)
+						WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
+							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+					pageHTML = self.driver.page_source
+
+					pageInfo = {
+						"AreaId": areaId,
+						"ParentAreaId": currentAreaId,
+						"URL": pageURL,
+						"HTML": pageHTML
+					}
+
+					subAreaInfo.append(pageInfo)
+
+				# subAreaInfo = [
+				# 	{
+				# 		"AreaId": int(re.search(pattern=r"\d+", string=subArea["href"]).group(0)),
+				# 		"ParentAreaId": currentAreaId,
+				# 		"URL": subArea["href"],
+				# 		"HTML": requests.get(subArea["href"]).text
+				# 	}
+				# 	for subArea in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a")
+				# ]
+				self.exportToJSON(subAreaInfo, "Area")
+				self.findSubordinateAreas(subAreaInfo, currentAreaId)
 
 	def findRoutes(self, area: dict, parentAreaId: int) -> None:
 		soup = BeautifulSoup(area["HTML"], "html.parser")
+		routeInfo = list()
 
-		routeInfo = [
-			{
-				"RouteId": int(re.search(pattern=r"\d+", string=route["href"]).group(0)),
+		for route in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a"):
+			if route["href"] == "#":
+				continue
+
+			pageURL = route["href"]
+			routeId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
+
+			self.driver.get(pageURL)
+
+			commentCount = self.driver.find_element_by_class_name("comment-count")
+			hasComments = commentCount.text != "0 Comments"
+
+			if hasComments:
+				html = self.driver.find_element_by_tag_name("html")
+				html.send_keys(Keys.END)
+				WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
+					"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+			pageHTML = self.driver.page_source
+
+			pageInfo = {
+				"RouteId": routeId,
 				"ParentAreaId": parentAreaId,
-				"URL": route["href"],
-				"HTML": requests.get(route["href"]).text
+				"URL": pageURL,
+				"HTML": pageHTML
 			}
-			for route in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a") if
-			route["href"] != "#"
-		]
+
+			routeInfo.append(pageInfo)
+
+
+		# routeInfo = [
+		# 	{
+		# 		"RouteId": int(re.search(pattern=r"\d+", string=route["href"]).group(0)),
+		# 		"ParentAreaId": parentAreaId,
+		# 		"URL": route["href"],
+		# 		"HTML": requests.get(route["href"]).text
+		# 	}
+		# 	for route in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a") if
+		# 	route["href"] != "#"
+		# ]
 
 		self.exportToJSON(routeInfo, "Route")
 
@@ -158,6 +289,60 @@ if __name__ == "__main__":
 	# 	"https://www.mountainproject.com/area/105744246/eldorado-canyon-sp"
 	# ]
 
+	areasToScrape = {
+		# "Alabama",
+		# "Alaska",
+		# "Arizona",
+		# "Arkansas",
+		# "Colorado",
+		# "Connecticut",
+		# "Delaware",
+		# "Florida",
+		# "Georgia",
+		# "Hawaii",
+		# "Idaho",
+		# "Illinois",
+		# "Indiana",
+		# "Iowa",
+		# "Kansas",
+		# "Kentucky",
+		"Louisiana",
+		# "Maine",
+		# "Maryland",
+		# "Massachusetts",
+		# "Michigan",
+		# "Minnesota",
+		# "Mississippi",
+		# "Missouri",
+		# "Montana",
+		# "Nebraska",
+		# "Nevada",
+		# "New Hampshire",
+		# "New Jersey",
+		# "New Mexico",
+		# "New York",
+		# "North Carolina",
+		# "North Dakota",
+		# "Ohio",
+		# "Oklahoma",
+		# "Oregon",
+		# "Pennsylvania",
+		# "Rhode Island",
+		# "South Carolina",
+		# "South Dakota",
+		# "Tennessee",
+		# "Texas",
+		# "Utah",
+		# "Vermont",
+		# "Virginia",
+		# "Washington",
+		# "West Virginia",
+		# "Wisconsin",
+		# "Wyoming",
+		# "International"
+		# "* In Progress"
+	}
+
 	# for startingPage in startingPages:
-	scraper = MountainScraper(outputDirectoryRoot="./TestFolder/")
+	scraper = MountainScraper(outputDirectoryRoot="./RawDataTest/", areasToScrape=areasToScrape)
 	scraper.processParentPages()

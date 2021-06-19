@@ -2,15 +2,31 @@
 
 import json
 import re
+import os
 from bs4 import BeautifulSoup
 from itertools import chain
 
 
 class MountainCleaner(object):
-    def __init__(self, filePath: str, dataType: str, exportPath: str):
+    def __init__(self, filePath: str, dataType: str, exportDir: str):
         self.filePath = filePath
         self.dataType = dataType
-        self.exportPath = exportPath
+        self.exportDir = exportDir.strip()
+        self.exportDir += (r"/" if self.exportDir[-1] != r"/" else "")
+        self.areaExportPath = self.exportDir + "Areas.json"
+        self.areaCommentsExportPath = self.exportDir + "AreaComments.json"
+        self.routeExportPath = self.exportDir + "Routes.json"
+        self.routeCommentsExportPath = self.exportDir + "RouteComments.json"
+        self.statsExportPath = self.exportDir + "Stats.json"
+        self.exportFilePaths = {
+            "Area".upper(): self.areaExportPath,
+            "AreaComment".upper(): self.areaCommentsExportPath,
+            "Route".upper(): self.routeExportPath,
+            "RouteComment".upper(): self.routeCommentsExportPath,
+            "Stats".upper(): self.statsExportPath
+        }
+
+        os.makedirs(self.exportDir, exist_ok=True)
 
     def clean(self) -> None:
         if self.dataType.upper() == "Route".upper():
@@ -27,13 +43,123 @@ class MountainCleaner(object):
 
         for line in file:
             fileContents = json.loads(line.strip())
+
+            soup = BeautifulSoup(fileContents["HTML"], "html.parser")
+            title = soup.find("h1")
+            children = [child.text.strip() for child in title.findChildren()]
+            areaName = " ".join(word.strip() for word in title.text.split() if word not in children)
+            areaInfo = self.curateAreaInfo(soup)
+
             areaInfo = {
-                    "AreaId": fileContents["AreaId"],
-                    "ParentAreaId": fileContents["ParentAreaId"],
-                    "URL": fileContents["URL"]
-                }
-            self.exportToJSON(areaInfo)
+                "AreaId": fileContents["AreaId"],
+                "ParentAreaId": fileContents["ParentAreaId"],
+                "AreaName": areaName,
+                "Elevation": areaInfo["Elevation"],
+                "ElevationUnits": areaInfo["ElevationUnits"],
+                "Latitude": areaInfo["Latitude"],
+                "Longitude": areaInfo["Longitude"],
+                "ViewsTotal": areaInfo["ViewsTotal"],
+                "ViewsMonth": areaInfo["ViewsMonth"],
+                "SharedOn": areaInfo["SharedOn"],
+                "Description": areaInfo["Description"],
+                "GettingThere": areaInfo["GettingThere"],
+                "URL": fileContents["URL"]
+            }
+            self.exportToJSON(areaInfo, "Area")
+            self.processAreaComments(fileContents["AreaId"], soup)
+            break
         file.close()
+
+    @staticmethod
+    def curateAreaInfo(soup: BeautifulSoup) -> dict[str]:
+        curatedAreaInfo = dict()
+        keys = {
+            "Elevation",
+            "ElevationUnits",
+            "Latitude",
+            "Longitude",
+            "ViewsTotal",
+            "ViewsMonth",
+            "SharedOn",
+            "Description",
+            "GettingThere"
+        }
+
+        routeInfo = soup.find(class_="description-details")
+        routeInfoRows = routeInfo.find_all("tr")
+
+        for row in routeInfoRows:
+            info = row.text
+            if "Elevation".upper() in info.upper():
+                elevationInfo = re.search(pattern=r"(-?(\d,?)+\sft|(\d,?)+\sm)", string=info.strip())
+                if elevationInfo:
+                    elevationInfo = elevationInfo.group(0).split()
+                    curatedAreaInfo["Elevation"] = float(elevationInfo[0].replace(",", ""))
+                    curatedAreaInfo["ElevationUnits"] = elevationInfo[1]
+            elif "GPS".upper() in info.upper():
+                gpsInfo = re.findall(pattern=r"-?\d+\.?(?:\d+)?,\s?-?\d+\.?(?:\d+)?", string=info.strip())
+                if gpsInfo:
+                    gpsInfo = gpsInfo[0].split(",")
+                    curatedAreaInfo["Latitude"] = float(gpsInfo[0])
+                    curatedAreaInfo["Longitude"] = float(gpsInfo[1])
+            elif "Page Views".upper() in info.upper():
+                viewInfo = re.findall(pattern=r"(?:\d,?)+(?: total|/month)", string=info)
+                if viewInfo:
+                    curatedAreaInfo["ViewsTotal"] = int(viewInfo[0].lower().replace("total", "").replace(",", ""))
+                    curatedAreaInfo["ViewsMonth"] = int(viewInfo[1].lower().replace("/month", "").replace(",", ""))
+            elif "Shared By".upper() in info.upper():
+                sharedOn = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)
+                if sharedOn:
+                    curatedAreaInfo["SharedOn"] = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)[0]
+            else:
+                pass
+
+        pageInfoBlocks = soup.find_all(class_="fr-view")
+        for pageInfo in pageInfoBlocks:
+            previousSibling = pageInfo.find_previous_sibling()
+            sectionTitle = "".join(previousSibling.text.split())
+
+            if "Descript".upper() in sectionTitle.upper().strip():
+                curatedAreaInfo["Description"] = pageInfo.text.strip()
+
+            if "GettingThere".upper() in sectionTitle.upper().strip():
+                curatedAreaInfo["GettingThere"] = pageInfo.text.strip()
+
+        return {key: curatedAreaInfo[key] if key in curatedAreaInfo.keys() else None for key in keys}
+
+    def processAreaComments(self, areaId: int, soup: BeautifulSoup) -> None:
+        commentsBlock = soup.find(class_="comment-list")
+        comments = soup.find_all(class_="main-comment width100")
+        print(soup)
+        print(comments)
+        for comment in comments:
+            commentId = int(re.search(pattern=r"\d+", string=comment["id"]).group(0))
+            userInfo = comment.find(class_="pl-1 py-1 user hidden-xs-down")
+            userPage = userInfo.find("a")
+            if userPage is not None:
+                userId = int(re.search(pattern=r"\d+", string=userPage["href"]).group(0))
+                userName = userPage.text.strip()
+            else:
+                userId = None
+                userName = None
+
+            commentContent = comment.find(class_="p-1")
+            commentBody = commentContent.find(class_="comment-body")
+            commentText = " ".join(commentBody.text.split())
+            commentTime = commentBody.find(class_="comment-time").text
+            betaVotes = int(commentContent.find(class_="num-likes").text)
+
+            areaCommentInfo = {
+                "CommentId": commentId,
+                "UserId": userId,
+                "AreaId": areaId,
+                "UserName": userName,
+                "CommentBody": commentText,
+                "CommentTime": commentTime,
+                "BetaVotes": betaVotes
+            }
+
+            self.exportToJSON(areaCommentInfo, "AreaComment")
 
     def cleanRouteInfo(self) -> None:
         file = open(self.filePath, "r", encoding="utf8")
@@ -193,8 +319,8 @@ class MountainCleaner(object):
 
         print(f"Missing route statistics for {zeroDataCount} routes.")
 
-    def exportToJSON(self, data: dict) -> None:
-        file = open(self.exportPath, "a")
+    def exportToJSON(self, data: dict, dataType: str) -> None:
+        file = open(self.exportFilePaths[dataType.upper()], "a")
 
         jsonContent = json.dumps(data, indent=None, separators=(",", ":"))
         print(jsonContent, file=file)
@@ -206,7 +332,7 @@ if __name__ == "__main__":
     # cleaner = MountainCleaner("./data/Areas.json", "Area", "./data/Clean/Areas.json")
     # cleaner.clean()
     #
-    cleaner = MountainCleaner("./SampleData/Routes.json", "Route", "./SampleData/Clean/Routes.json")
+    cleaner = MountainCleaner("./SampleData/Areas.json", "Area", "./SampleData/Clean2/")
     cleaner.clean()
 
     # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean2/Stats.json")
