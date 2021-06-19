@@ -65,17 +65,6 @@ class MountainScraper(object):
 				self.areasScraped.add(areaName)
 				self.parentAreas.append(pageInfo)
 
-			# self.parentAreas = [
-			# 	{
-			# 		"AreaId": int(re.search(pattern=r"\d+", string=strong.find("a")["href"]).group(0)),
-			# 		"ParentAreaId": None,
-			# 		"URL": strong.find("a")["href"],
-			# 		"HTML": requests.get(strong.find("a")["href"]).text
-			# 	}
-			# 	for strong in routeGuide.find_all("strong")
-			# 	if self.areasToScrape is None or strong.find("a").text in self.areasToScrape
-			# ]
-
 		else:
 			pageURL = self.startingPage
 			areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
@@ -102,15 +91,6 @@ class MountainScraper(object):
 			}
 
 			self.parentAreas.append(pageInfo)
-
-			# self.parentAreas = [
-			# 	{
-			# 		"AreaId": int(re.search(pattern=r"\d+", string=self.startingPage).group(0)),
-			# 		"ParentAreaId": None,  # Not sure what to put here. We could go fetch it...
-			# 		"URL": self.startingPage,
-			# 		"HTML": requests.get(self.startingPage).text
-			# 	}
-			# ]
 
 	def processParentPages(self) -> None:
 		for area in self.parentAreas:
@@ -179,15 +159,6 @@ class MountainScraper(object):
 
 					subAreaInfo.append(pageInfo)
 
-				# subAreaInfo = [
-				# 	{
-				# 		"AreaId": int(re.search(pattern=r"\d+", string=subArea["href"]).group(0)),
-				# 		"ParentAreaId": currentAreaId,
-				# 		"URL": subArea["href"],
-				# 		"HTML": requests.get(subArea["href"]).text
-				# 	}
-				# 	for subArea in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a")
-				# ]
 				self.exportToJSON(subAreaInfo, "Area")
 				self.findSubordinateAreas(subAreaInfo, currentAreaId)
 
@@ -224,18 +195,6 @@ class MountainScraper(object):
 
 			routeInfo.append(pageInfo)
 
-
-		# routeInfo = [
-		# 	{
-		# 		"RouteId": int(re.search(pattern=r"\d+", string=route["href"]).group(0)),
-		# 		"ParentAreaId": parentAreaId,
-		# 		"URL": route["href"],
-		# 		"HTML": requests.get(route["href"]).text
-		# 	}
-		# 	for route in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a") if
-		# 	route["href"] != "#"
-		# ]
-
 		self.exportToJSON(routeInfo, "Route")
 
 		for route in routeInfo:
@@ -253,8 +212,6 @@ class MountainScraper(object):
 		]
 
 		self.exportToJSON(routeStats, "Stats")
-
-		return
 
 	def exportToJSON(self, data: list[dict], dataType: str) -> None:
 		if dataType.upper() == "Area".upper():
