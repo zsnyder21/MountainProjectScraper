@@ -4,6 +4,8 @@ import os
 import requests
 import re
 import json
+
+import selenium.common.exceptions
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
@@ -139,15 +141,21 @@ class MountainScraper(object):
 
 					self.driver.get(pageURL)
 
-					commentCount = self.driver.find_element_by_class_name("comment-count")
-					hasComments = commentCount.text != "0 Comments"
+					try:
+						commentCount = self.driver.find_element_by_class_name("comment-count")
+						hasComments = commentCount.text != "0 Comments"
+					except selenium.common.exceptions.NoSuchElementException as e:
+						print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
+						hasComments = False
 
 					if hasComments:
 						html = self.driver.find_element_by_tag_name("html")
 						html.send_keys(Keys.END)
-						WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
-							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
-
+						try:
+							WebDriverWait(self.driver, 60).until(EC.presence_of_element_located((By.XPATH,
+								"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+						except selenium.common.exceptions.TimeoutException as e:
+							print(f"AreaId: {areaId} - could not find comment element")
 					pageHTML = self.driver.page_source
 
 					pageInfo = {
@@ -175,15 +183,21 @@ class MountainScraper(object):
 
 			self.driver.get(pageURL)
 
-			commentCount = self.driver.find_element_by_class_name("comment-count")
-			hasComments = commentCount.text != "0 Comments"
+			try:
+				commentCount = self.driver.find_element_by_class_name("comment-count")
+				hasComments = commentCount.text != "0 Comments"
+			except selenium.common.exceptions.NoSuchElementException as e:
+				print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
+				hasComments = False
 
 			if hasComments:
 				html = self.driver.find_element_by_tag_name("html")
 				html.send_keys(Keys.END)
-				WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
-					"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
-
+				try:
+					WebDriverWait(self.driver, 60).until(EC.presence_of_element_located((By.XPATH,
+						"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+				except selenium.common.exceptions.TimeoutException as e:
+					print(f"RouteId: {routeId} - could not find comment element")
 			pageHTML = self.driver.page_source
 
 			pageInfo = {
@@ -251,55 +265,58 @@ if __name__ == "__main__":
 		# "Alaska",
 		# "Arizona",
 		# "Arkansas",
-		# "Colorado",
-		# "Connecticut",
-		# "Delaware",
-		# "Florida",
-		# "Georgia",
-		# "Hawaii",
-		# "Idaho",
-		# "Illinois",
-		# "Indiana",
-		# "Iowa",
-		# "Kansas",
-		# "Kentucky",
+		"California",
+		"Colorado",
+		"Connecticut",
+		"Delaware",
+		"Florida",
+		"Georgia",
+		"Hawaii",
+		"Idaho",
+		"Illinois",
+		"Indiana",
+		"Iowa",
+		"Kansas",
+		"Kentucky",
 		"Louisiana",
-		# "Maine",
-		# "Maryland",
-		# "Massachusetts",
-		# "Michigan",
-		# "Minnesota",
-		# "Mississippi",
-		# "Missouri",
-		# "Montana",
-		# "Nebraska",
-		# "Nevada",
-		# "New Hampshire",
-		# "New Jersey",
-		# "New Mexico",
-		# "New York",
-		# "North Carolina",
-		# "North Dakota",
-		# "Ohio",
-		# "Oklahoma",
-		# "Oregon",
-		# "Pennsylvania",
-		# "Rhode Island",
-		# "South Carolina",
-		# "South Dakota",
-		# "Tennessee",
-		# "Texas",
-		# "Utah",
-		# "Vermont",
-		# "Virginia",
-		# "Washington",
-		# "West Virginia",
-		# "Wisconsin",
-		# "Wyoming",
-		# "International"
-		# "* In Progress"
+		"Maine",
+		"Maryland",
+		"Massachusetts",
+		"Michigan",
+		"Minnesota",
+		"Mississippi",
+		"Missouri",
+		"Montana",
+		"Nebraska",
+		"Nevada",
+		"New Hampshire",
+		"New Jersey",
+		"New Mexico",
+		"New York",
+		"North Carolina",
+		"North Dakota",
+		"Ohio",
+		"Oklahoma",
+		"Oregon",
+		"Pennsylvania",
+		"Rhode Island",
+		"South Carolina",
+		"South Dakota",
+		"Tennessee",
+		"Texas",
+		"Utah",
+		"Vermont",
+		"Virginia",
+		"Washington",
+		"West Virginia",
+		"Wisconsin",
+		"Wyoming",
+		"International"
+		"* In Progress"
 	}
 
 	# for startingPage in startingPages:
-	scraper = MountainScraper(outputDirectoryRoot="./RawDataTest/", areasToScrape=areasToScrape)
+	scraper = MountainScraper(outputDirectoryRoot="./RawDataComments/", areasToScrape=areasToScrape)
+	# scraper = MountainScraper(startingPage=r"https://www.mountainproject.com/area/111860940/south-san-diego-county",
+	# 						 outputDirectoryRoot="./RawDataTest")
 	scraper.processParentPages()
