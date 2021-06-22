@@ -126,7 +126,8 @@ class MountainScraper(object):
 			subAreaInfo = list()
 
 			# Determine if this is an empty area
-			if "This area is empty".upper() in soup.find(class_="mp-sidebar").text.upper():
+			sidebar = soup.findsoup.find(class_="mp-sidebar")
+			if sidebar is None or (sidebar is not None and "This area is empty".upper() in sidebar.text.upper()):
 				continue
 
 			# Determine if we have found routes yet
