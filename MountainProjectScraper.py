@@ -126,7 +126,7 @@ class MountainScraper(object):
 			subAreaInfo = list()
 
 			# Determine if this is an empty area
-			sidebar = soup.findsoup.find(class_="mp-sidebar")
+			sidebar = soup.find(class_="mp-sidebar")
 			if sidebar is None or (sidebar is not None and "This area is empty".upper() in sidebar.text.upper()):
 				continue
 
