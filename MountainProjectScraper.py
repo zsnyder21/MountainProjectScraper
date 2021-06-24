@@ -31,7 +31,6 @@ class MountainScraper(object):
 		self.driver = webdriver.Chrome(options=chrome_options)
 
 		os.makedirs(self.outputDirectoryRoot, exist_ok=True)
-		pageLoaded = False
 
 		if startingPage is None:
 			self.driver.get(self.startingPage)
@@ -45,6 +44,7 @@ class MountainScraper(object):
 				pageURL = strong.find("a")["href"]
 				areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
 				parentAreaId = None
+				pageLoaded = False
 
 				while not pageLoaded:
 					try:
@@ -91,6 +91,7 @@ class MountainScraper(object):
 			pageURL = self.startingPage
 			areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
 			parentAreaId = None
+			pageLoaded = False
 
 			while not pageLoaded:
 				try:
@@ -334,8 +335,8 @@ if __name__ == "__main__":
 		# "Arizona",
 		# "Arkansas",
 		# "California",
-		"Colorado",
-		"Connecticut",
+		# "Colorado",
+		# "Connecticut",
 		"Delaware",
 		"Florida",
 		"Georgia",

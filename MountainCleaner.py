@@ -46,8 +46,11 @@ class MountainCleaner(object):
 
             soup = BeautifulSoup(fileContents["HTML"], "html.parser")
             title = soup.find("h1")
-            children = [child.text.strip() for child in title.findChildren()]
-            areaName = " ".join(word.strip() for word in title.text.split() if word not in children)
+            firstChild = title.findChild()
+            childrenWordCount = len(firstChild.text.split()) if firstChild is not None else 0
+            allWords = title.text.split()
+            areaName = " ".join(word.strip() for word in allWords[:len(allWords) - childrenWordCount])
+
             areaInfo = self.curateAreaInfo(soup)
 
             areaInfo = {
@@ -67,7 +70,7 @@ class MountainCleaner(object):
             }
             self.exportToJSON(areaInfo, "Area")
             self.processAreaComments(fileContents["AreaId"], soup)
-            break
+
         file.close()
 
     @staticmethod
@@ -128,10 +131,8 @@ class MountainCleaner(object):
         return {key: curatedAreaInfo[key] if key in curatedAreaInfo.keys() else None for key in keys}
 
     def processAreaComments(self, areaId: int, soup: BeautifulSoup) -> None:
-        commentsBlock = soup.find(class_="comment-list")
         comments = soup.find_all(class_="main-comment width100")
-        print(soup)
-        print(comments)
+
         for comment in comments:
             commentId = int(re.search(pattern=r"\d+", string=comment["id"]).group(0))
             userInfo = comment.find(class_="pl-1 py-1 user hidden-xs-down")
@@ -145,8 +146,8 @@ class MountainCleaner(object):
 
             commentContent = comment.find(class_="p-1")
             commentBody = commentContent.find(class_="comment-body")
-            commentText = " ".join(commentBody.text.split())
-            commentTime = commentBody.find(class_="comment-time").text
+            commentText = " ".join(commentBody.find(id=f"{commentId}-full").text.split())
+            commentTime = commentBody.find(class_="comment-time").text.strip()
             betaVotes = int(commentContent.find(class_="num-likes").text)
 
             areaCommentInfo = {
@@ -332,7 +333,7 @@ if __name__ == "__main__":
     # cleaner = MountainCleaner("./data/Areas.json", "Area", "./data/Clean/Areas.json")
     # cleaner.clean()
     #
-    cleaner = MountainCleaner("./SampleData/Areas.json", "Area", "./SampleData/Clean2/")
+    cleaner = MountainCleaner("./SampleData2/Areas.json", "Area", "./SampleData2/Clean/")
     cleaner.clean()
 
     # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean2/Stats.json")
