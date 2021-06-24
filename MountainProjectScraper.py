@@ -27,10 +27,11 @@ class MountainScraper(object):
 		self.parentAreas = list()
 
 		chrome_options = Options()
-		chrome_options.add_argument("--headless")
+		# chrome_options.add_argument("--headless")
 		self.driver = webdriver.Chrome(options=chrome_options)
 
 		os.makedirs(self.outputDirectoryRoot, exist_ok=True)
+		pageLoaded = False
 
 		if startingPage is None:
 			self.driver.get(self.startingPage)
@@ -45,16 +46,35 @@ class MountainScraper(object):
 				areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
 				parentAreaId = None
 
-				self.driver.get(pageURL)
+				while not pageLoaded:
+					try:
+						self.driver.get(pageURL)
+						pageLoaded = True
+					except selenium.common.exceptions.TimeoutException as e:
+						print(f"Took too long to load {pageURL}. Trying again...")
 
-				commentCount = self.driver.find_element_by_class_name("comment-count")
-				hasComments = commentCount.text != "0 Comments"
+				try:
+					commentCount = self.driver.find_element_by_class_name("comment-count")
+					hasComments = commentCount.text != "0 Comments"
+				except selenium.common.exceptions.NoSuchElementException as e:
+					print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
+					hasComments = False
 
 				if hasComments:
-					html = self.driver.find_element_by_tag_name("html")
-					html.send_keys(Keys.END)
-					WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
-						"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+					commentsFound = False
+					while not commentsFound:
+						html = self.driver.find_element_by_tag_name("html")
+						html.send_keys(Keys.END)
+						# for _ in range(5):
+						# 	html.send_keys(Keys.PAGE_UP)
+						try:
+							WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+								"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+							commentsFound = True
+						except selenium.common.exceptions.TimeoutException as e:
+							print(f"AreaId: {areaId}, URL: {pageURL} - could not find comment element")
+							self.driver.refresh()
 
 				pageHTML = self.driver.page_source
 
@@ -72,16 +92,35 @@ class MountainScraper(object):
 			areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
 			parentAreaId = None
 
-			self.driver.get(pageURL)
+			while not pageLoaded:
+				try:
+					self.driver.get(pageURL)
+					pageLoaded = True
+				except selenium.common.exceptions.TimeoutException as e:
+					print(f"Took too long to load {pageURL}. Trying again...")
 
-			commentCount = self.driver.find_element_by_class_name("comment-count")
-			hasComments = commentCount.text != "0 Comments"
+			try:
+				commentCount = self.driver.find_element_by_class_name("comment-count")
+				hasComments = commentCount.text != "0 Comments"
+			except selenium.common.exceptions.NoSuchElementException as e:
+				print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
+				hasComments = False
 
 			if hasComments:
-				html = self.driver.find_element_by_tag_name("html")
-				html.send_keys(Keys.END)
-				WebDriverWait(self.driver, 15).until(EC.presence_of_element_located((By.XPATH,
-																					 "//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+				commentsFound = False
+				while not commentsFound:
+					html = self.driver.find_element_by_tag_name("html")
+					html.send_keys(Keys.END)
+					# for _ in range(5):
+					# 	html.send_keys(Keys.PAGE_UP)
+					try:
+						WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+						commentsFound = True
+					except selenium.common.exceptions.TimeoutException as e:
+						print(f"AreaId: {areaId}, URL: {pageURL} - could not find comment element")
+						self.driver.refresh()
 
 			pageHTML = self.driver.page_source
 
@@ -139,8 +178,14 @@ class MountainScraper(object):
 				for subArea in soup.find(class_="max-height max-height-md-0 max-height-xs-400").findAll("a"):
 					pageURL = subArea["href"]
 					areaId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
+					pageLoaded = False
 
-					self.driver.get(pageURL)
+					while not pageLoaded:
+						try:
+							self.driver.get(pageURL)
+							pageLoaded = True
+						except selenium.common.exceptions.TimeoutException as e:
+							print(f"Took too long to load {pageURL}. Trying again...")
 
 					try:
 						commentCount = self.driver.find_element_by_class_name("comment-count")
@@ -150,13 +195,21 @@ class MountainScraper(object):
 						hasComments = False
 
 					if hasComments:
-						html = self.driver.find_element_by_tag_name("html")
-						html.send_keys(Keys.END)
-						try:
-							WebDriverWait(self.driver, 60).until(EC.presence_of_element_located((By.XPATH,
-								"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
-						except selenium.common.exceptions.TimeoutException as e:
-							print(f"AreaId: {areaId} - could not find comment element")
+						commentsFound = False
+						while not commentsFound:
+							html = self.driver.find_element_by_tag_name("html")
+							html.send_keys(Keys.END)
+							# for _ in range(5):
+							# 	html.send_keys(Keys.PAGE_UP)
+							try:
+								WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+									"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+								commentsFound = True
+							except selenium.common.exceptions.TimeoutException as e:
+								print(f"AreaId: {areaId}, URL: {pageURL} - could not find comment element")
+								self.driver.refresh()
+
 					pageHTML = self.driver.page_source
 
 					pageInfo = {
@@ -181,8 +234,14 @@ class MountainScraper(object):
 
 			pageURL = route["href"]
 			routeId = int(re.search(pattern=r"\d+", string=pageURL).group(0))
+			pageLoaded = False
 
-			self.driver.get(pageURL)
+			while not pageLoaded:
+				try:
+					self.driver.get(pageURL)
+					pageLoaded = True
+				except selenium.common.exceptions.TimeoutException as e:
+					print(f"Took too long to load {pageURL}. Trying again...")
 
 			try:
 				commentCount = self.driver.find_element_by_class_name("comment-count")
@@ -192,13 +251,21 @@ class MountainScraper(object):
 				hasComments = False
 
 			if hasComments:
-				html = self.driver.find_element_by_tag_name("html")
-				html.send_keys(Keys.END)
-				try:
-					WebDriverWait(self.driver, 60).until(EC.presence_of_element_located((By.XPATH,
-						"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
-				except selenium.common.exceptions.TimeoutException as e:
-					print(f"RouteId: {routeId} - could not find comment element")
+				commentsFound = False
+				while not commentsFound:
+					html = self.driver.find_element_by_tag_name("html")
+					html.send_keys(Keys.END)
+					# for _ in range(5):
+					# 	html.send_keys(Keys.PAGE_UP)
+					try:
+						WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
+
+						commentsFound = True
+					except selenium.common.exceptions.TimeoutException as e:
+						print(f"RouteId: {routeId}, URL: {pageURL} - could not find comment element")
+						self.driver.refresh()
+
 			pageHTML = self.driver.page_source
 
 			pageInfo = {
@@ -266,7 +333,7 @@ if __name__ == "__main__":
 		# "Alaska",
 		# "Arizona",
 		# "Arkansas",
-		"California",
+		# "California",
 		"Colorado",
 		"Connecticut",
 		"Delaware",
@@ -318,6 +385,6 @@ if __name__ == "__main__":
 
 	# for startingPage in startingPages:
 	scraper = MountainScraper(outputDirectoryRoot="./RawDataComments/", areasToScrape=areasToScrape)
-	# scraper = MountainScraper(startingPage=r"https://www.mountainproject.com/area/111860940/south-san-diego-county",
+	# scraper = MountainScraper(startingPage=r"https://www.mountainproject.com/area/105744267/shelf-road",
 	# 						 outputDirectoryRoot="./RawDataTest")
 	scraper.processParentPages()
