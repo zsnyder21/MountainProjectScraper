@@ -43,29 +43,22 @@ class MountainCleaner(object):
 
         for line in file:
             fileContents = json.loads(line.strip())
-
             soup = BeautifulSoup(fileContents["HTML"], "html.parser")
-            title = soup.find("h1")
-            firstChild = title.findChild()
-            childrenWordCount = len(firstChild.text.split()) if firstChild is not None else 0
-            allWords = title.text.split()
-            areaName = " ".join(word.strip() for word in allWords[:len(allWords) - childrenWordCount])
-
-            areaInfo = self.curateAreaInfo(soup)
+            curatedAreaInfo = self.curateAreaInfo(soup)
 
             areaInfo = {
                 "AreaId": fileContents["AreaId"],
                 "ParentAreaId": fileContents["ParentAreaId"],
-                "AreaName": areaName,
-                "Elevation": areaInfo["Elevation"],
-                "ElevationUnits": areaInfo["ElevationUnits"],
-                "Latitude": areaInfo["Latitude"],
-                "Longitude": areaInfo["Longitude"],
-                "ViewsTotal": areaInfo["ViewsTotal"],
-                "ViewsMonth": areaInfo["ViewsMonth"],
-                "SharedOn": areaInfo["SharedOn"],
-                "Description": areaInfo["Description"],
-                "GettingThere": areaInfo["GettingThere"],
+                "AreaName": curatedAreaInfo["AreaName"],
+                "Elevation": curatedAreaInfo["Elevation"],
+                "ElevationUnits": curatedAreaInfo["ElevationUnits"],
+                "Latitude": curatedAreaInfo["Latitude"],
+                "Longitude": curatedAreaInfo["Longitude"],
+                "ViewsTotal": curatedAreaInfo["ViewsTotal"],
+                "ViewsMonth": curatedAreaInfo["ViewsMonth"],
+                "SharedOn": curatedAreaInfo["SharedOn"],
+                "Description": curatedAreaInfo["Description"],
+                "GettingThere": curatedAreaInfo["GettingThere"],
                 "URL": fileContents["URL"]
             }
             self.exportToJSON(areaInfo, "Area")
@@ -77,6 +70,7 @@ class MountainCleaner(object):
     def curateAreaInfo(soup: BeautifulSoup) -> dict[str]:
         curatedAreaInfo = dict()
         keys = {
+            "AreaName",
             "Elevation",
             "ElevationUnits",
             "Latitude",
@@ -88,10 +82,17 @@ class MountainCleaner(object):
             "GettingThere"
         }
 
-        routeInfo = soup.find(class_="description-details")
-        routeInfoRows = routeInfo.find_all("tr")
+        title = soup.find("h1")
+        firstChild = title.findChild()
+        childrenWordCount = len(firstChild.text.split()) if firstChild is not None else 0
+        allWords = title.text.split()
+        areaName = " ".join(word.strip() for word in allWords[:len(allWords) - childrenWordCount])
+        curatedAreaInfo["AreaName"] = areaName
 
-        for row in routeInfoRows:
+        areaInfo = soup.find(class_="description-details")
+        areaInfoRows = areaInfo.find_all("tr")
+
+        for row in areaInfoRows:
             info = row.text
             if "Elevation".upper() in info.upper():
                 elevationInfo = re.search(pattern=r"(-?(\d,?)+\sft|(\d,?)+\sm)", string=info.strip())
@@ -164,122 +165,223 @@ class MountainCleaner(object):
 
     def cleanRouteInfo(self) -> None:
         file = open(self.filePath, "r", encoding="utf8")
-        zeroDataCount = 0
 
         for line in file:
-            # try:
-                fileContents = json.loads(line.strip())
-                routeId = fileContents["RouteId"]
-                parentAreaId = fileContents["ParentAreaId"]
-                routeURL = fileContents["URL"]
+            fileContents = json.loads(line.strip())
+            routeId = fileContents["RouteId"]
+            parentAreaId = fileContents["ParentAreaId"]
+            routeURL = fileContents["URL"]
 
-                if not fileContents["HTML"]:
-                    zeroDataCount += 1
-                    continue
+            soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
-                soup = BeautifulSoup(fileContents["HTML"], "html.parser")
-                routeDetails = soup.find(class_="description-details")
-                if routeDetails is None:
-                    zeroDataCount += 1
-                    continue
+            curatedRouteInfo = self.curateRouteInfo(routeId, soup)
 
-                routeTypeInfo = routeDetails.find("tr").text.split(":")[1].strip().split(",")
-                difficultyInfo = self.getRouteDifficulty(soup)
-                if difficultyInfo["YDS"] is None:
-                    zeroDataCount += 1
-                    continue
-                ratingInfo = soup.find(id=f"starsWithAvgText-{routeId}").text.split()[1:4:2]
-                routeName = soup.find("h1").text.strip()
+            routeInfo = {
+                "RouteId": routeId,
+                "ParentAreaId": parentAreaId,
+                "RouteName": curatedRouteInfo["RouteName"],
+                "Difficulty_YDS": curatedRouteInfo["Difficulty_YDS"],
+                "Difficulty_French": curatedRouteInfo["Difficulty_French"],
+                "Difficulty_ADL": curatedRouteInfo["Difficulty_ADL"],
+                "Severity": curatedRouteInfo["Severity"],
+                "Type": curatedRouteInfo["Type"],
+                "Height": curatedRouteInfo["Height"],
+                "HeightUnits": curatedRouteInfo["HeightUnits"],
+                "Pitches": curatedRouteInfo["Pitches"],
+                "Grade": curatedRouteInfo["Grade"],
+                "Description": curatedRouteInfo["Description"],
+                "Location": curatedRouteInfo["Location"],
+                "Protection": curatedRouteInfo["Protection"],
+                "FirstAscent": curatedRouteInfo["FirstAscent"],
+                "FirstAscentYear": curatedRouteInfo["FirstAscentYear"],
+                "FirstFreeAscent": curatedRouteInfo["FirstFreeAscent"],
+                "FirstFreeAscentYear": curatedRouteInfo["FirstFreeAscentYear"],
+                "Rating": curatedRouteInfo["Rating"],
+                "VoteCount": curatedRouteInfo["VoteCount"],
+                "URL": routeURL
+            }
 
-                routeInfo = self.curateRouteInfo(routeId, parentAreaId, routeName, routeURL, routeTypeInfo, difficultyInfo, ratingInfo)
+            self.exportToJSON(routeInfo, "Route")
+            self.processRouteComments(routeId, soup)
 
-                self.exportToJSON(routeInfo)
-            # except Exception as e:
-            #     print(e)
-            #     print(routeURL)
-                # return
-
-        print(f"Missing data for {zeroDataCount} routes.")
-
-    @classmethod
-    def curateRouteInfo(cls, routeId: int, parentAreaId: int, routeName: str, routeURL: str, routeTypeInfo: list[str],
-                        difficultyInfo: dict, ratingInfo: list[str]) -> dict:
-        routeKeys = ["RouteId", "ParentAreaId", "Name", "URL", "Difficulty", "Difficulty_ADL", "Severity", "Type",
-                     "Height", "HeightUnits", "Pitches", "Grade", "Rating", "VoteCount"]
+    def curateRouteInfo(self, routeId: int, soup: BeautifulSoup) -> dict:
+        routeKeys = ["RouteName", "Difficulty_YDS", "Difficulty_French", "Difficulty_ADL", "Severity", "Type",
+                     "Height", "HeightUnits", "Pitches", "Grade", "Rating", "VoteCount", "Description", "Location",
+                     "Protection", "FirstAscent", "FirstAscentYear", "FirstFreeAscent", "FirstFreeAscentYear"]
         types = {"trad", "sport", "toprope", "boulder", "ice", "aid", "mixed", "alpine"}
         severities = {"G", "PG", "PG13", "PG-13", "R", "X"}
-        routeInfo = {"RouteId": routeId, "ParentAreaId": parentAreaId, "Name": routeName, "URL": routeURL,
-                     "Difficulty": difficultyInfo["YDS"]}
+        gradeMap = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7}
+
+        difficultyInfo = self.getRouteDifficulty(soup)
+        ratingInfo = soup.find(id=f"starsWithAvgText-{routeId}").text.split()[1:4:2]
+        routeName = soup.find("h1").text.strip()
+
+        curatedRouteInfo = {
+            "RouteName": routeName,
+            "Difficulty_YDS": difficultyInfo["YDS"],
+            "Difficulty_French": difficultyInfo["French"]
+        }
 
         if difficultyInfo["Additional"]:
-            routeInfo["Severity"] = difficultyInfo["Additional"][-1].strip()\
+            curatedRouteInfo["Severity"] = difficultyInfo["Additional"][-1].strip()\
                 if difficultyInfo["Additional"][-1].strip() in severities else None
         else:
-            routeInfo["Severity"] = None
+            curatedRouteInfo["Severity"] = None
 
-        routeInfo["Difficulty_ADL"] = " ".join([item.strip() for item in difficultyInfo["Additional"]
-                                                if item and item.strip() != routeInfo["Severity"]])
+        curatedRouteInfo["Difficulty_ADL"] = " ".join([item.strip() for item in difficultyInfo["Additional"]
+                                                if item and item.strip() != curatedRouteInfo["Severity"]])
 
-        while routeTypeInfo:
-            info = routeTypeInfo.pop(0)
+        routeInfo = soup.find(class_="description-details")
+        routeInfoRows = routeInfo.find_all("tr")
 
-            if info.strip().lower() in types:
-                if "Type" in routeInfo.keys():
-                    routeInfo["Type"] += f", {info.strip()}"
-                else:
-                    routeInfo["Type"] = info.strip()
+        for row in routeInfoRows:
+            info = row.text
 
-            if re.match(pattern=r"(\d+\sft|\d+\sm)", string=info.strip().lower()):
-                heightInfo = re.match(pattern=r"(\d+\sft|\d+\sm)", string=info.strip()).group(0).split()
-                routeInfo["Height"] = int(heightInfo[0])
-                routeInfo["HeightUnits"] = heightInfo[1]
+            if "Type".upper() in info.upper():
+                routeTypeInfo = info.split(":")[1].strip().split(",")
+                while routeTypeInfo:
+                    typeInfo = routeTypeInfo.pop(0)
 
-            if "Pitches".lower() in info.lower():
-                routeInfo["Pitches"] = info.strip()
+                    if typeInfo.strip().lower() in types:
+                        if "Type" in curatedRouteInfo.keys():
+                            curatedRouteInfo["Type"] += f", {typeInfo.strip()}"
+                        else:
+                            curatedRouteInfo["Type"] = typeInfo.strip()
 
-            if "Grade".lower() in info.lower():
-                routeInfo["Grade"] = info.strip()
+                    if re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip().lower()):
+                        heightInfo = re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip()).group(0).split()
+                        curatedRouteInfo["Height"] = int(heightInfo[0])
+                        curatedRouteInfo["HeightUnits"] = heightInfo[1]
 
-        routeInfo["Rating"] = float(ratingInfo[0])
-        routeInfo["VoteCount"] = int(ratingInfo[1].replace(",", ""))
+                    if "Pitches".lower() in typeInfo.lower():
+                        pitchCount = re.search(pattern=r"\d+", string=typeInfo)
+                        if pitchCount:
+                            pitchCount = int(pitchCount.group(0))
+                            curatedRouteInfo["Pitches"] = pitchCount
 
-        return {key: routeInfo[key] if key in routeInfo.keys() else None for key in routeKeys}
+                    if "Grade".lower() in typeInfo.lower():
+                        curatedRouteInfo["Grade"] = gradeMap[typeInfo.upper().replace("Grade".upper(), "").strip()]
 
-    @classmethod
-    def getRouteDifficulty(cls, soup: BeautifulSoup) -> dict:
+            elif "FA".upper() in info.upper():
+                firstAscentInfo = re.findall(pattern=r"(?<=FA:)[^:]+(?=FFA:)|(?<=FFA:)[^:]+(?=$)|(?<=FA:)[^:]+(?=$)", string=info.strip())
+                if firstAscentInfo:
+                    firstAscentText = firstAscentInfo[0]
+                    firstAscentYear = re.search(pattern=r"\d{4}", string=firstAscentText)
+                    firstAscentYear = int(firstAscentYear.group(0).strip()) if firstAscentYear else None
+                    curatedRouteInfo["FirstAscent"] = firstAscentText.strip() if "unknown".upper() not in firstAscentText.upper() else None
+                    curatedRouteInfo["FirstAscentYear"] = firstAscentYear
+
+                    if len(firstAscentInfo) > 1:
+                        firstFreeAscentText = firstAscentInfo[1]
+                        firstFreeAscentYear = re.search(pattern=r"\d{4}", string=firstFreeAscentText)
+                        firstFreeAscentYear = int(firstFreeAscentYear.group(0).strip()) if firstAscentYear else None
+                        curatedRouteInfo["FirstFreeAscent"] = firstFreeAscentText.strip() if "unknown".upper() not in firstFreeAscentText.upper() else None
+                        curatedRouteInfo["FirstFreeAscentYear"] = firstFreeAscentYear
+
+            elif "Page Views".upper() in info.upper():
+                viewInfo = re.findall(pattern=r"(?:\d,?)+(?: total|/month)", string=info)
+                if viewInfo:
+                    curatedRouteInfo["ViewsTotal"] = int(viewInfo[0].lower().replace("total", "").replace(",", ""))
+                    curatedRouteInfo["ViewsMonth"] = int(viewInfo[1].lower().replace("/month", "").replace(",", ""))
+
+            elif "Shared By".upper() in info.upper():
+                sharedOn = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)
+                if sharedOn:
+                    curatedRouteInfo["SharedOn"] = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)[0]
+            else:
+                pass
+
+        pageInfoBlocks = soup.find_all(class_="fr-view")
+        for pageInfo in pageInfoBlocks:
+            previousSibling = pageInfo.find_previous_sibling()
+            sectionTitle = "".join(previousSibling.text.split())
+
+            if "Descript".upper() in sectionTitle.upper().strip():
+                curatedRouteInfo["Description"] = pageInfo.text.strip()
+
+            if "Location".upper() in sectionTitle.upper().strip():
+                curatedRouteInfo["Location"] = pageInfo.text.strip()
+
+            if "Protection".upper() in sectionTitle.upper().strip():
+                curatedRouteInfo["Protection"] = pageInfo.text.strip()
+
+        curatedRouteInfo["Rating"] = float(ratingInfo[0])
+        curatedRouteInfo["VoteCount"] = int(ratingInfo[1].replace(",", ""))
+
+        return {key: curatedRouteInfo[key] if key in curatedRouteInfo.keys() else None for key in routeKeys}
+
+    def processRouteComments(self, routeId: int, soup: BeautifulSoup) -> None:
+        comments = soup.find_all(class_="main-comment width100")
+
+        for comment in comments:
+            commentId = int(re.search(pattern=r"\d+", string=comment["id"]).group(0))
+            userInfo = comment.find(class_="pl-1 py-1 user hidden-xs-down")
+            userPage = userInfo.find("a")
+            if userPage is not None:
+                userId = int(re.search(pattern=r"\d+", string=userPage["href"]).group(0))
+                userName = userPage.text.strip()
+            else:
+                userId = None
+                userName = None
+
+            commentContent = comment.find(class_="p-1")
+            commentBody = commentContent.find(class_="comment-body")
+            commentText = " ".join(commentBody.find(id=f"{commentId}-full").text.split())
+            commentTime = commentBody.find(class_="comment-time").text.strip()
+            betaVotes = int(commentContent.find(class_="num-likes").text)
+
+            areaCommentInfo = {
+                "CommentId": commentId,
+                "UserId": userId,
+                "RouteId": routeId,
+                "UserName": userName,
+                "CommentBody": commentText,
+                "CommentTime": commentTime,
+                "BetaVotes": betaVotes
+            }
+
+            self.exportToJSON(areaCommentInfo, "RouteComment")
+
+    @staticmethod
+    def getRouteDifficulty(soup: BeautifulSoup) -> dict:
         difficulty = soup.find(class_="inline-block mr-2")
         if difficulty is None:
             return {"YDS": None, "Additional": None}
 
         difficultyText = difficulty.text.split()
         difficultyChildren = difficulty.findChildren("span")
-        YDS = difficulty.find(class_="rateYDS")
+        ratingYDS = difficulty.find(class_="rateYDS")
+        ratingFrench = difficulty.find(class_="rateFrench")
 
-        if YDS is not None:
-            YDS = " ".join(word for word in YDS.text.split() if word.upper() != "YDS")
+        if ratingYDS is not None:
+            ratingYDS = " ".join(word for word in ratingYDS.text.split() if word.upper() != "YDS")
         else:
-            YDS = None
+            ratingYDS = None
+
+        if ratingFrench is not None:
+            ratingFrench = " ".join(word for word in ratingFrench.text.split() if word.upper() != "FRENCH")
+        else:
+            ratingFrench = None
 
         if difficultyChildren is not None:
             difficultyToRemove = set(chain(*[child.text.split() for child in difficultyChildren]))
         else:
             difficultyToRemove = []
 
-        return {"YDS": YDS, "Additional": [word for word in difficultyText if word not in difficultyToRemove]}
+        return {
+            "YDS": ratingYDS,
+            "French": ratingFrench,
+            "Additional": [word for word in difficultyText if word not in difficultyToRemove]
+        }
 
     def cleanStatsInfo(self) -> None:
         file = open(self.filePath, "r", encoding="utf8")
-        zeroDataCount = 0
 
         for line in file:
             fileContents = json.loads(line.strip())
             routeId = fileContents["RouteId"]
             parentAreaId = fileContents["ParentAreaId"]
             statsURL = fileContents["URL"]
-
-            if not fileContents["HTML"]:
-                zeroDataCount += 1
-                continue
 
             soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
@@ -289,7 +391,6 @@ class MountainCleaner(object):
             if ticksTable is None:
                 continue
 
-            # tickCount = int(re.search(pattern=r"\d+", string=ticksTable.find("h3").text).group(0))
             ticks = ticksTable.find_all("tr")
             for tick in ticks:
                 userPage = tick.find("a")
@@ -300,7 +401,6 @@ class MountainCleaner(object):
                     userName = None
                     userId = None
 
-                # print(userPage.text, userId)
                 tickInfo = tick.find(class_="small max-height max-height-md-120 max-height-xs-120").find("div").text
                 tickInfo = [info.strip() for info in tickInfo.split("·")]
 
@@ -316,9 +416,7 @@ class MountainCleaner(object):
                     "TickInfo": None if len(tickInfo) < 2 else tickInfo[1]
                 }
 
-                self.exportToJSON(userTick)
-
-        print(f"Missing route statistics for {zeroDataCount} routes.")
+                self.exportToJSON(userTick, "Stats")
 
     def exportToJSON(self, data: dict, dataType: str) -> None:
         file = open(self.exportFilePaths[dataType.upper()], "a")
@@ -333,7 +431,9 @@ if __name__ == "__main__":
     # cleaner = MountainCleaner("./data/Areas.json", "Area", "./data/Clean/Areas.json")
     # cleaner.clean()
     #
-    cleaner = MountainCleaner("./SampleData2/Areas.json", "Area", "./SampleData2/Clean/")
+    # cleaner = MountainCleaner("./SampleData2/Areas.json", "Area", "./SampleData2/Clean/")
+    cleaner = MountainCleaner("./SampleData2/Routes.json", "Route", "./SampleData2/Clean/")
+    # cleaner = MountainCleaner("./SampleData2/Stats.json", "Stats", "./SampleData2/Clean")
     cleaner.clean()
 
     # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean2/Stats.json")

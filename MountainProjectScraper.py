@@ -65,8 +65,7 @@ class MountainScraper(object):
 					while not commentsFound:
 						html = self.driver.find_element_by_tag_name("html")
 						html.send_keys(Keys.END)
-						# for _ in range(5):
-						# 	html.send_keys(Keys.PAGE_UP)
+
 						try:
 							WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
 								"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
@@ -112,8 +111,7 @@ class MountainScraper(object):
 				while not commentsFound:
 					html = self.driver.find_element_by_tag_name("html")
 					html.send_keys(Keys.END)
-					# for _ in range(5):
-					# 	html.send_keys(Keys.PAGE_UP)
+
 					try:
 						WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
 							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
@@ -200,8 +198,7 @@ class MountainScraper(object):
 						while not commentsFound:
 							html = self.driver.find_element_by_tag_name("html")
 							html.send_keys(Keys.END)
-							# for _ in range(5):
-							# 	html.send_keys(Keys.PAGE_UP)
+
 							try:
 								WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
 									"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
@@ -256,8 +253,7 @@ class MountainScraper(object):
 				while not commentsFound:
 					html = self.driver.find_element_by_tag_name("html")
 					html.send_keys(Keys.END)
-					# for _ in range(5):
-					# 	html.send_keys(Keys.PAGE_UP)
+
 					try:
 						WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
 							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
@@ -337,21 +333,21 @@ if __name__ == "__main__":
 		# "California",
 		# "Colorado",
 		# "Connecticut",
-		"Delaware",
-		"Florida",
-		"Georgia",
-		"Hawaii",
-		"Idaho",
-		"Illinois",
-		"Indiana",
-		"Iowa",
-		"Kansas",
-		"Kentucky",
-		"Louisiana",
-		"Maine",
-		"Maryland",
-		"Massachusetts",
-		"Michigan",
+		# "Delaware",
+		# "Florida",
+		# "Georgia",
+		# "Hawaii",
+		# "Idaho",
+		# "Illinois",
+		# "Indiana",
+		# "Iowa",
+		# "Kansas",
+		# "Kentucky",
+		# "Louisiana",
+		# "Maine",
+		# "Maryland",
+		# "Massachusetts",
+		# "Michigan",
 		"Minnesota",
 		"Mississippi",
 		"Missouri",
