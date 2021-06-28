@@ -90,44 +90,48 @@ class MountainCleaner(object):
         curatedAreaInfo["AreaName"] = areaName
 
         areaInfo = soup.find(class_="description-details")
-        areaInfoRows = areaInfo.find_all("tr")
 
-        for row in areaInfoRows:
-            info = row.text
-            if "Elevation".upper() in info.upper():
-                elevationInfo = re.search(pattern=r"(-?(\d,?)+\sft|(\d,?)+\sm)", string=info.strip())
-                if elevationInfo:
-                    elevationInfo = elevationInfo.group(0).split()
-                    curatedAreaInfo["Elevation"] = float(elevationInfo[0].replace(",", ""))
-                    curatedAreaInfo["ElevationUnits"] = elevationInfo[1]
-            elif "GPS".upper() in info.upper():
-                gpsInfo = re.findall(pattern=r"-?\d+\.?(?:\d+)?,\s?-?\d+\.?(?:\d+)?", string=info.strip())
-                if gpsInfo:
-                    gpsInfo = gpsInfo[0].split(",")
-                    curatedAreaInfo["Latitude"] = float(gpsInfo[0])
-                    curatedAreaInfo["Longitude"] = float(gpsInfo[1])
-            elif "Page Views".upper() in info.upper():
-                viewInfo = re.findall(pattern=r"(?:\d,?)+(?: total|/month)", string=info)
-                if viewInfo:
-                    curatedAreaInfo["ViewsTotal"] = int(viewInfo[0].lower().replace("total", "").replace(",", ""))
-                    curatedAreaInfo["ViewsMonth"] = int(viewInfo[1].lower().replace("/month", "").replace(",", ""))
-            elif "Shared By".upper() in info.upper():
-                sharedOn = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)
-                if sharedOn:
-                    curatedAreaInfo["SharedOn"] = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)[0]
-            else:
-                pass
+        if areaInfo is not None:
+            areaInfoRows = areaInfo.find_all("tr")
+
+            for row in areaInfoRows:
+                info = row.text
+                if "Elevation".upper() in info.upper():
+                    elevationInfo = re.search(pattern=r"(-?(\d,?)+\sft|(\d,?)+\sm)", string=info.strip())
+                    if elevationInfo:
+                        elevationInfo = elevationInfo.group(0).split()
+                        curatedAreaInfo["Elevation"] = float(elevationInfo[0].replace(",", ""))
+                        curatedAreaInfo["ElevationUnits"] = elevationInfo[1]
+                elif "GPS".upper() in info.upper():
+                    gpsInfo = re.findall(pattern=r"-?\d+\.?(?:\d+)?,\s?-?\d+\.?(?:\d+)?", string=info.strip())
+                    if gpsInfo:
+                        gpsInfo = gpsInfo[0].split(",")
+                        curatedAreaInfo["Latitude"] = float(gpsInfo[0])
+                        curatedAreaInfo["Longitude"] = float(gpsInfo[1])
+                elif "Page Views".upper() in info.upper():
+                    viewInfo = re.findall(pattern=r"(?:\d,?)+(?: total|/month)", string=info)
+                    if viewInfo:
+                        curatedAreaInfo["ViewsTotal"] = int(viewInfo[0].lower().replace("total", "").replace(",", ""))
+                        curatedAreaInfo["ViewsMonth"] = int(viewInfo[1].lower().replace("/month", "").replace(",", ""))
+                elif "Shared By".upper() in info.upper():
+                    sharedOn = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)
+                    if sharedOn:
+                        curatedAreaInfo["SharedOn"] = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)[0]
+                else:
+                    pass
 
         pageInfoBlocks = soup.find_all(class_="fr-view")
-        for pageInfo in pageInfoBlocks:
-            previousSibling = pageInfo.find_previous_sibling()
-            sectionTitle = "".join(previousSibling.text.split())
 
-            if "Descript".upper() in sectionTitle.upper().strip():
-                curatedAreaInfo["Description"] = pageInfo.text.strip()
+        if pageInfoBlocks is not None:
+            for pageInfo in pageInfoBlocks:
+                previousSibling = pageInfo.find_previous_sibling()
+                sectionTitle = "".join(previousSibling.text.split())
 
-            if "GettingThere".upper() in sectionTitle.upper().strip():
-                curatedAreaInfo["GettingThere"] = pageInfo.text.strip()
+                if "Descript".upper() in sectionTitle.upper().strip():
+                    curatedAreaInfo["Description"] = pageInfo.text.strip()
+
+                if "GettingThere".upper() in sectionTitle.upper().strip():
+                    curatedAreaInfo["GettingThere"] = pageInfo.text.strip()
 
         return {key: curatedAreaInfo[key] if key in curatedAreaInfo.keys() else None for key in keys}
 
@@ -213,8 +217,10 @@ class MountainCleaner(object):
         gradeMap = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7}
 
         difficultyInfo = self.getRouteDifficulty(soup)
-        ratingInfo = soup.find(id=f"starsWithAvgText-{routeId}").text.split()[1:4:2]
-        routeName = soup.find("h1").text.strip()
+        ratingInfo = soup.find(id=f"starsWithAvgText-{routeId}")
+        ratingInfo = ratingInfo.text.split()[1:4:2] if ratingInfo is not None else None
+        routeName = soup.find("h1")
+        routeName = routeName.text.strip() if routeName is not None else None
 
         curatedRouteInfo = {
             "RouteName": routeName,
@@ -232,78 +238,83 @@ class MountainCleaner(object):
                                                 if item and item.strip() != curatedRouteInfo["Severity"]])
 
         routeInfo = soup.find(class_="description-details")
-        routeInfoRows = routeInfo.find_all("tr")
 
-        for row in routeInfoRows:
-            info = row.text
+        if routeInfo is not None:
+            routeInfoRows = routeInfo.find_all("tr")
+            for row in routeInfoRows:
+                info = row.text
 
-            if "Type".upper() in info.upper():
-                routeTypeInfo = info.split(":")[1].strip().split(",")
-                while routeTypeInfo:
-                    typeInfo = routeTypeInfo.pop(0)
+                if "Type".upper() in info.upper():
+                    routeTypeInfo = info.split(":")[1].strip().split(",")
+                    while routeTypeInfo:
+                        typeInfo = routeTypeInfo.pop(0)
 
-                    if typeInfo.strip().lower() in types:
-                        if "Type" in curatedRouteInfo.keys():
-                            curatedRouteInfo["Type"] += f", {typeInfo.strip()}"
-                        else:
-                            curatedRouteInfo["Type"] = typeInfo.strip()
+                        if typeInfo.strip().lower() in types:
+                            if "Type" in curatedRouteInfo.keys():
+                                curatedRouteInfo["Type"] += f", {typeInfo.strip()}"
+                            else:
+                                curatedRouteInfo["Type"] = typeInfo.strip()
 
-                    if re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip().lower()):
-                        heightInfo = re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip()).group(0).split()
-                        curatedRouteInfo["Height"] = int(heightInfo[0])
-                        curatedRouteInfo["HeightUnits"] = heightInfo[1]
+                        if re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip().lower()):
+                            heightInfo = re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip()).group(0).split()
+                            curatedRouteInfo["Height"] = int(heightInfo[0])
+                            curatedRouteInfo["HeightUnits"] = heightInfo[1]
 
-                    if "Pitches".lower() in typeInfo.lower():
-                        pitchCount = re.search(pattern=r"\d+", string=typeInfo)
-                        if pitchCount:
-                            pitchCount = int(pitchCount.group(0))
-                            curatedRouteInfo["Pitches"] = pitchCount
+                        if "Pitches".lower() in typeInfo.lower():
+                            pitchCount = re.search(pattern=r"\d+", string=typeInfo)
+                            if pitchCount:
+                                pitchCount = int(pitchCount.group(0))
+                                curatedRouteInfo["Pitches"] = pitchCount
 
-                    if "Grade".lower() in typeInfo.lower():
-                        curatedRouteInfo["Grade"] = gradeMap[typeInfo.upper().replace("Grade".upper(), "").strip()]
+                        if "Grade".lower() in typeInfo.lower():
+                            grade = re.search(pattern=r"(?<=GRADE)\s(?:I|V)+", string=typeInfo.upper())
+                            if grade:
+                                curatedRouteInfo["Grade"] = gradeMap[grade.group(0).strip()]
 
-            elif "FA".upper() in info.upper():
-                firstAscentInfo = re.findall(pattern=r"(?<=FA:)[^:]+(?=FFA:)|(?<=FFA:)[^:]+(?=$)|(?<=FA:)[^:]+(?=$)", string=info.strip())
-                if firstAscentInfo:
-                    firstAscentText = firstAscentInfo[0]
-                    firstAscentYear = re.search(pattern=r"\d{4}", string=firstAscentText)
-                    firstAscentYear = int(firstAscentYear.group(0).strip()) if firstAscentYear else None
-                    curatedRouteInfo["FirstAscent"] = firstAscentText.strip() if "unknown".upper() not in firstAscentText.upper() else None
-                    curatedRouteInfo["FirstAscentYear"] = firstAscentYear
+                elif "FA".upper() in info.upper():
+                    firstAscentInfo = re.findall(pattern=r"(?<=FA:)[^:]+(?=FFA:)|(?<=FFA:)[^:]+(?=$)|(?<=FA:)[^:]+(?=$)", string=info.strip())
+                    if firstAscentInfo:
+                        firstAscentText = firstAscentInfo[0]
+                        firstAscentYear = re.search(pattern=r"\d{4}", string=firstAscentText)
+                        firstAscentYear = int(firstAscentYear.group(0).strip()) if firstAscentYear else None
+                        curatedRouteInfo["FirstAscent"] = firstAscentText.strip() if "unknown".upper() not in firstAscentText.upper() else None
+                        curatedRouteInfo["FirstAscentYear"] = firstAscentYear
 
-                    if len(firstAscentInfo) > 1:
-                        firstFreeAscentText = firstAscentInfo[1]
-                        firstFreeAscentYear = re.search(pattern=r"\d{4}", string=firstFreeAscentText)
-                        firstFreeAscentYear = int(firstFreeAscentYear.group(0).strip()) if firstAscentYear else None
-                        curatedRouteInfo["FirstFreeAscent"] = firstFreeAscentText.strip() if "unknown".upper() not in firstFreeAscentText.upper() else None
-                        curatedRouteInfo["FirstFreeAscentYear"] = firstFreeAscentYear
+                        if len(firstAscentInfo) > 1:
+                            firstFreeAscentText = firstAscentInfo[1]
+                            firstFreeAscentYear = re.search(pattern=r"\d{4}", string=firstFreeAscentText)
+                            firstFreeAscentYear = int(firstFreeAscentYear.group(0).strip()) if firstFreeAscentYear else None
+                            curatedRouteInfo["FirstFreeAscent"] = firstFreeAscentText.strip() if "unknown".upper() not in firstFreeAscentText.upper() else None
+                            curatedRouteInfo["FirstFreeAscentYear"] = firstFreeAscentYear
 
-            elif "Page Views".upper() in info.upper():
-                viewInfo = re.findall(pattern=r"(?:\d,?)+(?: total|/month)", string=info)
-                if viewInfo:
-                    curatedRouteInfo["ViewsTotal"] = int(viewInfo[0].lower().replace("total", "").replace(",", ""))
-                    curatedRouteInfo["ViewsMonth"] = int(viewInfo[1].lower().replace("/month", "").replace(",", ""))
+                elif "Page Views".upper() in info.upper():
+                    viewInfo = re.findall(pattern=r"(?:\d,?)+(?: total|/month)", string=info)
+                    if viewInfo:
+                        curatedRouteInfo["ViewsTotal"] = int(viewInfo[0].lower().replace("total", "").replace(",", ""))
+                        curatedRouteInfo["ViewsMonth"] = int(viewInfo[1].lower().replace("/month", "").replace(",", ""))
 
-            elif "Shared By".upper() in info.upper():
-                sharedOn = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)
-                if sharedOn:
-                    curatedRouteInfo["SharedOn"] = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)[0]
-            else:
-                pass
+                elif "Shared By".upper() in info.upper():
+                    sharedOn = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)
+                    if sharedOn:
+                        curatedRouteInfo["SharedOn"] = re.findall(pattern=r"\w{3} \d{1,2}, \d{4}", string=info)[0]
+                else:
+                    pass
 
         pageInfoBlocks = soup.find_all(class_="fr-view")
-        for pageInfo in pageInfoBlocks:
-            previousSibling = pageInfo.find_previous_sibling()
-            sectionTitle = "".join(previousSibling.text.split())
 
-            if "Descript".upper() in sectionTitle.upper().strip():
-                curatedRouteInfo["Description"] = pageInfo.text.strip()
+        if pageInfoBlocks is not None:
+            for pageInfo in pageInfoBlocks:
+                previousSibling = pageInfo.find_previous_sibling()
+                sectionTitle = "".join(previousSibling.text.split())
 
-            if "Location".upper() in sectionTitle.upper().strip():
-                curatedRouteInfo["Location"] = pageInfo.text.strip()
+                if "Descript".upper() in sectionTitle.upper().strip():
+                    curatedRouteInfo["Description"] = pageInfo.text.strip()
 
-            if "Protection".upper() in sectionTitle.upper().strip():
-                curatedRouteInfo["Protection"] = pageInfo.text.strip()
+                if "Location".upper() in sectionTitle.upper().strip():
+                    curatedRouteInfo["Location"] = pageInfo.text.strip()
+
+                if "Protection".upper() in sectionTitle.upper().strip():
+                    curatedRouteInfo["Protection"] = pageInfo.text.strip()
 
         curatedRouteInfo["Rating"] = float(ratingInfo[0])
         curatedRouteInfo["VoteCount"] = int(ratingInfo[1].replace(",", ""))
@@ -346,7 +357,7 @@ class MountainCleaner(object):
     def getRouteDifficulty(soup: BeautifulSoup) -> dict:
         difficulty = soup.find(class_="inline-block mr-2")
         if difficulty is None:
-            return {"YDS": None, "Additional": None}
+            return {"YDS": None, "French": None, "Additional": None}
 
         difficultyText = difficulty.text.split()
         difficultyChildren = difficulty.findChildren("span")
@@ -428,33 +439,27 @@ class MountainCleaner(object):
 
 
 if __name__ == "__main__":
+    for idx, folder in enumerate(os.walk(r"./RawDataComments")):
+        if idx < 1:
+            continue
+
+        path = folder[0]
+
+        areaCleaner = MountainCleaner(path + r"/Areas.json", "Area", r"./CleanData/")
+        routeCleaner = MountainCleaner(path + r"/Routes.json", "Route", r"./CleanData/")
+        statsCleaner = MountainCleaner(path + r"/Stats.json", "Stats", r"./CleanData/")
+
+        areaCleaner.clean()
+        routeCleaner.clean()
+        statsCleaner.clean()
+
     # cleaner = MountainCleaner("./data/Areas.json", "Area", "./data/Clean/Areas.json")
     # cleaner.clean()
     #
     # cleaner = MountainCleaner("./SampleData2/Areas.json", "Area", "./SampleData2/Clean/")
-    cleaner = MountainCleaner("./SampleData2/Routes.json", "Route", "./SampleData2/Clean/")
+    # cleaner = MountainCleaner("./SampleData2/Routes.json", "Route", "./SampleData2/Clean/")
     # cleaner = MountainCleaner("./SampleData2/Stats.json", "Stats", "./SampleData2/Clean")
-    cleaner.clean()
-
+    # cleaner.clean()
+    #
     # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean2/Stats.json")
     # cleaner.clean()
-
-
-    # routes = spark.read.json("./data2/Routes.json")
-    # areas = spark.read.json("./data2/Areas.json")
-    # routeStats = spark.read.json("./data2/Stats.json")
-    #
-    # routes.createOrReplaceTempView("routes")
-    # areas.createOrReplaceTempView("areas")
-    # routeStats.createOrReplaceTempView("stats")
-    #
-    # # noinspection SqlDialectInspection
-    # query = """
-    # select  RouteId,
-    #         ParentAreaId,
-    #         URL
-    #     from routes
-    # """
-    # results = spark.sql(query)
-    #
-    # results.show(100, False)

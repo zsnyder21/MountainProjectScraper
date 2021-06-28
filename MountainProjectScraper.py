@@ -157,6 +157,8 @@ class MountainScraper(object):
 			self.exportToJSON(areaInfo, "Area")
 			self.findSubordinateAreas(areaInfo, currentAreaId)
 
+		self.driver.close()
+
 	def findSubordinateAreas(self, areas: list[dict], parentAreaId: any([None, int]) = None) -> None:
 		for area in areas:
 			currentAreaId = area["AreaId"]
@@ -348,40 +350,40 @@ if __name__ == "__main__":
 		# "Maryland",
 		# "Massachusetts",
 		# "Michigan",
-		"Minnesota",
-		"Mississippi",
-		"Missouri",
-		"Montana",
-		"Nebraska",
-		"Nevada",
-		"New Hampshire",
-		"New Jersey",
-		"New Mexico",
-		"New York",
-		"North Carolina",
-		"North Dakota",
-		"Ohio",
-		"Oklahoma",
-		"Oregon",
-		"Pennsylvania",
-		"Rhode Island",
-		"South Carolina",
-		"South Dakota",
-		"Tennessee",
-		"Texas",
-		"Utah",
-		"Vermont",
-		"Virginia",
-		"Washington",
-		"West Virginia",
-		"Wisconsin",
-		"Wyoming",
-		"International"
-		"* In Progress"
+		# "Minnesota",
+		# "Mississippi",
+		# "Missouri",
+		# "Montana",
+		# "Nebraska",
+		# "Nevada",
+		# "New Hampshire",
+		# "New Jersey",
+		# "New Mexico",
+		# "New York",
+		# "North Carolina",
+		# "North Dakota",
+		# "Ohio",
+		# "Oklahoma",
+		# "Oregon",
+		# "Pennsylvania",
+		# "Rhode Island",
+		# "South Carolina",
+		# "South Dakota",
+		# "Tennessee",
+		# "Texas",
+		# "Utah",
+		# "Vermont",
+		# "Virginia",
+		# "Washington",
+		# "West Virginia",
+		# "Wisconsin",
+		# "Wyoming",
+		# "International",
+		# "* In Progress"
 	}
 
 	# for startingPage in startingPages:
-	scraper = MountainScraper(outputDirectoryRoot="./RawDataComments/", areasToScrape=areasToScrape)
+	scraper = MountainScraper(outputDirectoryRoot="./RawDataComments2/") #, areasToScrape=areasToScrape)
 	# scraper = MountainScraper(startingPage=r"https://www.mountainproject.com/area/105744267/shelf-road",
 	# 						 outputDirectoryRoot="./RawDataTest")
 	scraper.processParentPages()
