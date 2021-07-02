@@ -16,7 +16,7 @@ from selenium.webdriver.common.by import By
 
 
 class MountainScraper(object):
-	def __init__(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./RawData/",
+	def __init__(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./data/Raw/",
 				 areasToScrape: set[str] = None, useSubDirs: bool = True) -> None:
 		self.startingPage = startingPage if startingPage is not None else "https://www.mountainproject.com/route-guide"
 		self.outputDirectoryRoot = outputDirectoryRoot
@@ -132,7 +132,7 @@ class MountainScraper(object):
 
 			self.parentAreas.append(pageInfo)
 
-	def processParentPages(self) -> None:
+	def scrape(self) -> None:
 		for area in self.parentAreas:
 			currentAreaId = area["AreaId"]
 			soup = BeautifulSoup(area["HTML"], "html.parser")
@@ -312,63 +312,5 @@ class MountainScraper(object):
 
 
 if __name__ == "__main__":
-	areasToScrape = {
-		# "Alabama",
-		# "Alaska",
-		# "Arizona",
-		# "Arkansas",
-		# "California",
-		# "Colorado",
-		# "Connecticut",
-		# "Delaware",
-		# "Florida",
-		# "Georgia",
-		# "Hawaii",
-		# "Idaho",
-		# "Illinois",
-		# "Indiana",
-		# "Iowa",
-		# "Kansas",
-		# "Kentucky",
-		# "Louisiana",
-		# "Maine",
-		# "Maryland",
-		# "Massachusetts",
-		# "Michigan",
-		# "Minnesota",
-		# "Mississippi",
-		# "Missouri",
-		# "Montana",
-		# "Nebraska",
-		# "Nevada",
-		# "New Hampshire",
-		# "New Jersey",
-		# "New Mexico",
-		# "New York",
-		# "North Carolina",
-		# "North Dakota",
-		# "Ohio",
-		# "Oklahoma",
-		# "Oregon",
-		# "Pennsylvania",
-		# "Rhode Island",
-		# "South Carolina",
-		# "South Dakota",
-		# "Tennessee",
-		# "Texas",
-		# "Utah",
-		# "Vermont",
-		# "Virginia",
-		# "Washington",
-		# "West Virginia",
-		# "Wisconsin",
-		# "Wyoming",
-		# "International",
-		# "* In Progress"
-	}
-
-	# for startingPage in startingPages:
-	scraper = MountainScraper(outputDirectoryRoot="./RawDataComments2/") #, areasToScrape=areasToScrape)
-	# scraper = MountainScraper(startingPage=r"https://www.mountainproject.com/area/105744267/shelf-road",
-	# 						 outputDirectoryRoot="./RawDataTest")
-	scraper.processParentPages()
+	scraper = MountainScraper()
+	scraper.scrape()

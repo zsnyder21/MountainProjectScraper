@@ -454,26 +454,15 @@ class MountainCleaner(object):
 if __name__ == "__main__":
     for idx, folder in enumerate(os.walk(r"./data/Raw")):
         if idx < 1:
+            # First folder is root - skip it
             continue
 
         path = folder[0]
-        print(path)
 
-        # areaCleaner = MountainCleaner(path + r"/Areas.json", "Area", r"./data/CleanTest/")
-        # routeCleaner = MountainCleaner(path + r"/Routes.json", "Route", r"./data/CleanTest/")
-        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"./data/CleanTest/")
+        areaCleaner = MountainCleaner(path + r"/Areas.json", "Area", r"./data/Clean/")
+        routeCleaner = MountainCleaner(path + r"/Routes.json", "Route", r"./data/Clean/")
+        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"./data/Clean/")
 
-        # areaCleaner.clean()
-        # routeCleaner.clean()
+        areaCleaner.clean()
+        routeCleaner.clean()
         ticksCleaner.clean()
-
-    # cleaner = MountainCleaner("./data/Areas.json", "Area", "./data/Clean/Areas.json")
-    # cleaner.clean()
-    #
-    # cleaner = MountainCleaner("./SampleData2/Areas.json", "Area", "./SampleData2/Clean/")
-    # cleaner = MountainCleaner("./SampleData2/Routes.json", "Route", "./SampleData2/Clean/")
-    # cleaner = MountainCleaner("./SampleData2/Stats.json", "Stats", "./SampleData2/Clean")
-    # cleaner.clean()
-    #
-    # cleaner = MountainCleaner("./data2/Stats.json", "Stats", "./data2/Clean2/Stats.json")
-    # cleaner.clean()
