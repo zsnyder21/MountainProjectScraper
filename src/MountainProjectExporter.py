@@ -166,12 +166,7 @@ class MountainExporter(object):
         for lineNumber, line in enumerate(file):
             if lineNumber % self.chunkSize == 0:
                 if lineNumber > 0:
-                    # try:
-                        execute_values(self.cursor, query, data)
-                    # except:
-                    #     print(lineNumber)
-                    #     print(data)
-                    #     break
+                    execute_values(self.cursor, query, data)
                 data = list()
 
             data.append(tuple(json.loads(line).values()))
