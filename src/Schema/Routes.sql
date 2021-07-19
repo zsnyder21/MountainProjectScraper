@@ -23,7 +23,7 @@ CREATE TABLE public.routes
     firstascentyear integer,
     firstfreeascent character varying(256) COLLATE pg_catalog."default",
     firstfreeascentyear integer,
-    averagerating integer,
+    averagerating numeric(2,1),
     votecount integer,
     url character varying(256) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "PK_Routes" PRIMARY KEY (routeid),

@@ -181,11 +181,11 @@ if __name__ == "__main__":
     password = os.getenv("POSTGRESQL_PASSWORD")
 
     files = [
-        ("Areas", "./data/Clean/Areas.json"),
-        ("AreaComments", "./data/Clean/AreaComments.json"),
-        ("Routes", "./data/Clean/Routes.json"),
-        ("RouteComments", "./data/Clean/RouteComments.json"),
-        ("RouteTicks", "./data/Clean/RouteTicks.json")
+        ("Areas", "../data/Clean/Areas.json"),
+        ("AreaComments", "../data/Clean/AreaComments.json"),
+        ("Routes", "../data/Clean/Routes.json"),
+        ("RouteComments", "../data/Clean/RouteComments.json"),
+        ("RouteTicks", "../data/Clean/RouteTicks.json")
     ]
 
     exporters = [
