@@ -18,23 +18,31 @@ class MountainCleaner(object):
         self.routeExportPath = self.exportDir + "Routes.json"
         self.routeCommentsExportPath = self.exportDir + "RouteComments.json"
         self.routeTicksExportPath = self.exportDir + "RouteTicks.json"
+        self.routeRatingsExportPath = self.exportDir + "RouteRatings.json"
+        self.routeToDoExportPath = self.exportDir + "RouteToDo.json"
         self.exportFilePaths = {
             "Area".upper(): self.areaExportPath,
             "AreaComment".upper(): self.areaCommentsExportPath,
             "Route".upper(): self.routeExportPath,
             "RouteComment".upper(): self.routeCommentsExportPath,
-            "RouteTick".upper(): self.routeTicksExportPath
+            "RouteTick".upper(): self.routeTicksExportPath,
+            "RouteRating".upper(): self.routeRatingsExportPath,
+            "RouteToDo".upper(): self.routeToDoExportPath
         }
 
         os.makedirs(self.exportDir, exist_ok=True)
 
     def clean(self) -> None:
-        if self.dataType.upper() == "Route".upper():
+        if self.dataType.upper() == "Routes".upper():
             self.cleanRouteInfo()
-        elif self.dataType.upper() == "Area".upper():
+        elif self.dataType.upper() == "Areas".upper():
             self.cleanAreaInfo()
         elif self.dataType.upper() == "Ticks".upper():
             self.cleanRouteTickInfo()
+        elif self.dataType.upper() == "Ratings".upper():
+            self.cleanRouteRatings()
+        elif self.dataType.upper() == "ToDos".upper():
+            self.cleanRouteToDos()
         else:
             return
 
@@ -216,6 +224,8 @@ class MountainCleaner(object):
             self.exportToJSON(routeInfo, "Route")
             self.processRouteComments(routeId, soup)
 
+        file.close()
+
     def curateRouteInfo(self, routeId: int, soup: BeautifulSoup) -> dict:
         routeKeys = ["RouteName", "Difficulty_YDS", "Difficulty_French", "Difficulty_ADL", "Severity", "Type",
                      "Height", "HeightUnits", "Pitches", "Grade", "Rating", "VoteCount", "Description", "Location",
@@ -237,13 +247,13 @@ class MountainCleaner(object):
         }
 
         if difficultyInfo["Additional"]:
-            curatedRouteInfo["Severity"] = difficultyInfo["Additional"][-1].strip()\
+            curatedRouteInfo["Severity"] = difficultyInfo["Additional"][-1].strip() \
                 if difficultyInfo["Additional"][-1].strip() in severities else None
         else:
             curatedRouteInfo["Severity"] = None
 
         curatedRouteInfo["Difficulty_ADL"] = " ".join([item.strip() for item in difficultyInfo["Additional"]
-                                                if item and item.strip() != curatedRouteInfo["Severity"]])
+                                                       if item and item.strip() != curatedRouteInfo["Severity"]])
 
         routeInfo = soup.find(class_="description-details")
 
@@ -280,7 +290,8 @@ class MountainCleaner(object):
                                 curatedRouteInfo["Grade"] = gradeMap[grade.group(0).strip()]
 
                 elif "FA".upper() in info.upper():
-                    firstAscentInfo = re.findall(pattern=r"(?<=FA:)[^:]+(?=FFA:)|(?<=FFA:)[^:]+(?=$)|(?<=FA:)[^:]+(?=$)", string=info.strip())
+                    firstAscentInfo = re.findall(
+                        pattern=r"(?<=FA:)[^:]+(?=FFA:)|(?<=FFA:)[^:]+(?=$)|(?<=FA:)[^:]+(?=$)", string=info.strip())
                     if firstAscentInfo:
                         firstAscentText = firstAscentInfo[0]
                         firstAscentYear = re.search(pattern=r"\d{4}", string=firstAscentText)
@@ -291,8 +302,10 @@ class MountainCleaner(object):
                         if len(firstAscentInfo) > 1:
                             firstFreeAscentText = firstAscentInfo[1]
                             firstFreeAscentYear = re.search(pattern=r"\d{4}", string=firstFreeAscentText)
-                            firstFreeAscentYear = int(firstFreeAscentYear.group(0).strip()) if firstFreeAscentYear else None
-                            curatedRouteInfo["FirstFreeAscent"] = firstFreeAscentText.strip() if "unknown".upper() not in firstFreeAscentText.upper() else None
+                            firstFreeAscentYear = int(
+                                firstFreeAscentYear.group(0).strip()) if firstFreeAscentYear else None
+                            curatedRouteInfo[
+                                "FirstFreeAscent"] = firstFreeAscentText.strip() if "unknown".upper() not in firstFreeAscentText.upper() else None
                             curatedRouteInfo["FirstFreeAscentYear"] = firstFreeAscentYear
 
                 elif "Page Views".upper() in info.upper():
@@ -405,6 +418,9 @@ class MountainCleaner(object):
 
             soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
+            # Note that this element has changed class since I scraped the data
+            # The new name appears to be
+            # "col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400 max-height-processed"
             ticksTable = soup.find(
                 class_="col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
 
@@ -442,6 +458,95 @@ class MountainCleaner(object):
 
                 self.exportToJSON(userTick, "RouteTick")
 
+        file.close()
+
+    def cleanRouteRatings(self) -> None:
+        file = open(self.filePath, "r", encoding="utf8")
+
+        for line in file:
+            fileContents = json.loads(line.strip())
+            routeId = fileContents["RouteId"]
+            statsURL = fileContents["URL"]
+
+            soup = BeautifulSoup(fileContents["HTML"], "html.parser")
+
+            # Note that this element has changed class since I scraped the data
+            # The new name appears to be
+            # "col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400 max-height-processed"
+            ratingTable = soup.find(class_="col-lg-2 col-sm-4 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
+
+            if ratingTable is None or "Star Ratings".upper() not in ratingTable.find("h3").text.upper():
+                continue
+
+            ratings = ratingTable.find_all("tr")
+            for rating in ratings:
+                userPage = rating.find("a")
+                if userPage is not None:
+                    userName = userPage.text
+                    userId = int(re.search(pattern=r"\d+", string=userPage["href"]).group(0))
+                else:
+                    userName = None
+                    userId = None
+
+                stars = rating.find(class_="scoreStars")
+                starRating = stars.findChildren("img", recursive=False)
+
+                if len(starRating) == 1 and "Bomb".upper() in starRating[0]["src"].upper():
+                    userRouteRating = 0
+                else:
+                    userRouteRating = len(starRating)
+
+                userRating = {
+                    "RouteId": routeId,
+                    "UserId": userId,
+                    "UserName": userName,
+                    "Rating": userRouteRating,
+                    "URL": statsURL
+                }
+
+                self.exportToJSON(userRating, "RouteRating")
+
+        file.close()
+
+    def cleanRouteToDos(self):
+        file = open(self.filePath, "r", encoding="utf8")
+
+        for line in file:
+            fileContents = json.loads(line.strip())
+            routeId = fileContents["RouteId"]
+            statsURL = fileContents["URL"]
+
+            soup = BeautifulSoup(fileContents["HTML"], "html.parser")
+
+            # Note that this element has changed class since I scraped the data
+            # The new name appears to be
+            # "col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400 max-height-processed"
+            statsTables = soup.find_all(class_="col-lg-2 col-sm-4 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
+
+            for statTable in statsTables:
+                if "On To-Do Lists".upper() in statTable.find("h3").text.upper():
+                    toDos = statTable.find_all("tr")
+
+                    for toDo in toDos:
+                        userPage = toDo.find("a")
+                        if userPage is not None:
+                            userName = userPage.text
+                            userId = int(re.search(pattern=r"\d+", string=userPage["href"]).group(0))
+                        else:
+                            userName = None
+                            userId = None
+
+                        userToDo = {
+                            "RouteId": routeId,
+                            "UserId": userId,
+                            "UserName": userName,
+                            "URL": statsURL
+                        }
+
+                        self.exportToJSON(userToDo, "RouteToDo")
+
+        file.close()
+
     def exportToJSON(self, data: dict, dataType: str) -> None:
         file = open(self.exportFilePaths[dataType.upper()], "a")
 
@@ -452,17 +557,21 @@ class MountainCleaner(object):
 
 
 if __name__ == "__main__":
-    for idx, folder in enumerate(os.walk(r"./data/Raw")):
+    for idx, folder in enumerate(os.walk(r"../data/Raw")):
         if idx < 1:
             # First folder is root - skip it
             continue
 
         path = folder[0]
 
-        areaCleaner = MountainCleaner(path + r"/Areas.json", "Area", r"./data/Clean/")
-        routeCleaner = MountainCleaner(path + r"/Routes.json", "Route", r"./data/Clean/")
-        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"./data/Clean/")
+        areaCleaner = MountainCleaner(path + r"/Areas.json", "Areas", r"../data/Clean/")
+        routeCleaner = MountainCleaner(path + r"/Routes.json", "Routes", r"../data/Clean/")
+        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"../data/Clean/")
+        ratingsCleaner = MountainCleaner(path + r"/Stats.json", "Ratings", r"../data/Clean/")
+        toDosCleaner = MountainCleaner(path + r"/Stats.json", "ToDos", r"../data/Clean/")
 
         areaCleaner.clean()
         routeCleaner.clean()
         ticksCleaner.clean()
+        ratingsCleaner.clean()
+        toDosCleaner.clean()
