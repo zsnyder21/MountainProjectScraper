@@ -19,7 +19,7 @@ class MountainCleaner(object):
         self.routeCommentsExportPath = self.exportDir + "RouteComments.json"
         self.routeTicksExportPath = self.exportDir + "RouteTicks.json"
         self.routeRatingsExportPath = self.exportDir + "RouteRatings.json"
-        self.routeToDoExportPath = self.exportDir + "RouteToDo.json"
+        self.routeToDoExportPath = self.exportDir + "RouteToDos.json"
         self.exportFilePaths = {
             "Area".upper(): self.areaExportPath,
             "AreaComment".upper(): self.areaCommentsExportPath,
@@ -437,26 +437,27 @@ class MountainCleaner(object):
                     userName = None
                     userId = None
 
-                tickInfo = tick.find(class_="small max-height max-height-md-120 max-height-xs-120").find("div").text
-                tickInfo = [info.strip() for info in tickInfo.split("·")]
-                tickYear = re.search(pattern=r"\d{4}", string=tickInfo[0])
+                tickInfos = tick.find(class_="small max-height max-height-md-120 max-height-xs-120").find_all("div")
+                for tickInfo in tickInfos:
+                    tickInfoIndividual = [info.strip() for info in tickInfo.text.split("·")]
+                    tickYear = re.search(pattern=r"\d{4}", string=tickInfoIndividual[0])
 
-                if tickYear:
-                    if int(tickYear.group(0)) < 1900:
-                        tickInfo[0] = "-no date-"
-                else:
-                    tickInfo[0] = "-no date-"
+                    if tickYear:
+                        if int(tickYear.group(0)) < 1900:
+                            tickInfoIndividual[0] = None
+                    else:
+                        tickInfoIndividual[0] = None
 
-                userTick = {
-                    "RouteId": routeId,
-                    "UserId": userId,
-                    "UserName": userName,
-                    "TickDate": (tickInfo[0] if tickInfo[0].lower() != "-no date-" else None),
-                    "TickInfo": (None if len(tickInfo) < 2 else tickInfo[1]),
-                    "URL": statsURL,
-                }
+                    userTick = {
+                        "RouteId": routeId,
+                        "UserId": userId,
+                        "UserName": userName,
+                        "TickDate": tickInfoIndividual[0],
+                        "TickInfo": (None if len(tickInfoIndividual) < 2 else tickInfoIndividual[1]),
+                        "URL": statsURL,
+                    }
 
-                self.exportToJSON(userTick, "RouteTick")
+                    self.exportToJSON(userTick, "RouteTick")
 
         file.close()
 
@@ -566,7 +567,7 @@ if __name__ == "__main__":
 
         areaCleaner = MountainCleaner(path + r"/Areas.json", "Areas", r"../data/Clean/")
         routeCleaner = MountainCleaner(path + r"/Routes.json", "Routes", r"../data/Clean/")
-        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"../data/Clean/")
+        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"../data/Clean/test/")
         ratingsCleaner = MountainCleaner(path + r"/Stats.json", "Ratings", r"../data/Clean/")
         toDosCleaner = MountainCleaner(path + r"/Stats.json", "ToDos", r"../data/Clean/")
 

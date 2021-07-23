@@ -4,11 +4,11 @@
 
 CREATE TABLE public.routetodos
 (
-    todoid bigint NOT NULL,
+    todoid bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 548752113 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     routeid bigint NOT NULL,
     userid bigint,
     username character varying(128) COLLATE pg_catalog."default",
-    "URL" character varying(256) COLLATE pg_catalog."default" NOT NULL,
+    url character varying(256) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "PK_RouteToDos_ToDoId" PRIMARY KEY (todoid),
     CONSTRAINT "FK_RouteToDos_Routes" FOREIGN KEY (routeid)
         REFERENCES public.routes (routeid) MATCH SIMPLE

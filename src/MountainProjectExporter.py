@@ -15,10 +15,10 @@ class MountainExporter(object):
         self.chunkSize = chunkSize
 
         if dataType.upper() not in {"Areas".upper(), "AreaComments".upper(), "Routes".upper(), "RouteComments".upper(),
-                                    "RouteTicks".upper()}:
+                                    "RouteTicks".upper(), "RouteRatings".upper(), "RouteToDos".upper()}:
 
             raise ValueError(f"Invalid value specified for parameter dataType: {dataType}."
-                             f" Allowed values are [Areas, AreaComments, Routes, RouteComments, RouteTicks].")
+                             f" Allowed values are [Areas, AreaComments, Routes, RouteComments, RouteTicks, RouteRatings, RouteToDos].")
 
         self.connection = psycopg2.connect(user=username,
                                            password=password,
@@ -39,6 +39,10 @@ class MountainExporter(object):
             self.postRouteCommentsToSQL()
         elif self.dataType.upper() == "RouteTicks".upper():
             self.postRouteTicksToSQL()
+        elif self.dataType.upper() == "RouteRatings".upper():
+            self.postRouteRatingsToSQL()
+        elif self.dataType.upper() == "RouteToDos".upper():
+            self.postRouteToDosToSQL()
         else:
             pass
 
@@ -162,6 +166,39 @@ class MountainExporter(object):
         file.close()
         self.connection.commit()
 
+    def postRouteRatingsToSQL(self) -> None:
+        insertRouteCommentsQuery = """
+            INSERT INTO RouteRatings (
+                RouteId,
+                UserId,
+                UserName,
+                Rating,
+                URL
+                )
+            VALUES %s;
+            """
+
+        file = open(self.file, "r")
+        self.sendDataToSQL(file, insertRouteCommentsQuery)
+        file.close()
+        self.connection.commit()
+
+    def postRouteToDosToSQL(self) -> None:
+        insertRouteCommentsQuery = """
+            INSERT INTO RouteToDos (
+                RouteId,
+                UserId,
+                UserName,
+                URL
+                )
+            VALUES %s;
+            """
+
+        file = open(self.file, "r")
+        self.sendDataToSQL(file, insertRouteCommentsQuery)
+        file.close()
+        self.connection.commit()
+
     def sendDataToSQL(self, file: typing.IO, query: str) -> None:
         for lineNumber, line in enumerate(file):
             if lineNumber % self.chunkSize == 0:
@@ -185,7 +222,9 @@ if __name__ == "__main__":
         ("AreaComments", "../data/Clean/AreaComments.json"),
         ("Routes", "../data/Clean/Routes.json"),
         ("RouteComments", "../data/Clean/RouteComments.json"),
-        ("RouteTicks", "../data/Clean/RouteTicks.json")
+        ("RouteTicks", "../data/Clean/RouteTicks.json"),
+        ("RouteRatings", "../data/Clean/RouteRatings.json"),
+        ("RouteToDos", "../data/Clean/RouteToDos.json")
     ]
 
     exporters = [

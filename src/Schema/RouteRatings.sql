@@ -9,7 +9,7 @@ CREATE TABLE public.routeratings
     userid bigint,
     username character varying(128) COLLATE pg_catalog."default",
     rating integer NOT NULL,
-    "URL" character varying(256) COLLATE pg_catalog."default",
+    url character varying(256) COLLATE pg_catalog."default",
     CONSTRAINT "PK_RouteRatings" PRIMARY KEY (ratingid),
     CONSTRAINT "FK_RouteRatings_Routes" FOREIGN KEY (routeid)
         REFERENCES public.routes (routeid) MATCH SIMPLE
