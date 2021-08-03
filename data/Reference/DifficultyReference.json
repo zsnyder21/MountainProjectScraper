@@ -1,0 +1,307 @@
+{"Difficulty":"3rd","DifficultyRanking":0,"DifficultyBucket":0,"RatingSystem":"YDS","BucketName":"3rd"}
+{"Difficulty":"4th","DifficultyRanking":1,"DifficultyBucket":1,"RatingSystem":"YDS","BucketName":"4th"}
+{"Difficulty":"5th","DifficultyRanking":2, "DifficultyBucket":2,"RatingSystem": "YDS", "BucketName": "5th"}
+{"Difficulty":"Easy 5th","DifficultyRanking":2, "DifficultyBucket":2,"RatingSystem": "YDS", "BucketName": "5th"}
+{"Difficulty":"5.0-","DifficultyRanking":3, "DifficultyBucket":3,"RatingSystem": "YDS", "BucketName": "5.0"}
+{"Difficulty":"5.0","DifficultyRanking":4, "DifficultyBucket":3,"RatingSystem": "YDS", "BucketName": "5.0"}
+{"Difficulty":"5.0+","DifficultyRanking":5, "DifficultyBucket":3,"RatingSystem": "YDS", "BucketName": "5.0"}
+{"Difficulty":"5.1-","DifficultyRanking":6, "DifficultyBucket":4,"RatingSystem": "YDS", "BucketName": "5.1"}
+{"Difficulty":"5.1","DifficultyRanking":7, "DifficultyBucket":4,"RatingSystem": "YDS", "BucketName": "5.1"}
+{"Difficulty":"5.1+","DifficultyRanking":8, "DifficultyBucket":4,"RatingSystem": "YDS", "BucketName": "5.1"}
+{"Difficulty":"5.2-","DifficultyRanking":9, "DifficultyBucket":5,"RatingSystem": "YDS", "BucketName": "5.2"}
+{"Difficulty":"5.2","DifficultyRanking":10, "DifficultyBucket":5,"RatingSystem": "YDS", "BucketName": "5.2"}
+{"Difficulty":"5.2+","DifficultyRanking":11, "DifficultyBucket":5,"RatingSystem": "YDS", "BucketName": "5.2"}
+{"Difficulty":"5.3-","DifficultyRanking":12, "DifficultyBucket":6,"RatingSystem": "YDS", "BucketName": "5.3"}
+{"Difficulty":"5.3","DifficultyRanking":13, "DifficultyBucket":6,"RatingSystem": "YDS", "BucketName": "5.3"}
+{"Difficulty":"5.3+","DifficultyRanking":14, "DifficultyBucket":6,"RatingSystem": "YDS", "BucketName": "5.3"}
+{"Difficulty":"5.4-","DifficultyRanking":15, "DifficultyBucket":7,"RatingSystem": "YDS", "BucketName": "5.4"}
+{"Difficulty":"5.4","DifficultyRanking":16, "DifficultyBucket":7,"RatingSystem": "YDS", "BucketName": "5.4"}
+{"Difficulty":"5.4+","DifficultyRanking":17, "DifficultyBucket":7,"RatingSystem": "YDS", "BucketName": "5.4"}
+{"Difficulty":"5.5-","DifficultyRanking":18, "DifficultyBucket":8,"RatingSystem": "YDS", "BucketName": "5.5"}
+{"Difficulty":"5.5","DifficultyRanking":19, "DifficultyBucket":8,"RatingSystem": "YDS", "BucketName": "5.5"}
+{"Difficulty":"5.5+","DifficultyRanking":20, "DifficultyBucket":8,"RatingSystem": "YDS", "BucketName": "5.5"}
+{"Difficulty":"5.6-","DifficultyRanking":21, "DifficultyBucket":9,"RatingSystem": "YDS", "BucketName": "5.6"}
+{"Difficulty":"5.6","DifficultyRanking":22, "DifficultyBucket":9,"RatingSystem": "YDS", "BucketName": "5.6"}
+{"Difficulty":"5.6+","DifficultyRanking":23, "DifficultyBucket":9,"RatingSystem": "YDS", "BucketName": "5.6"}
+{"Difficulty":"5.7-","DifficultyRanking":24, "DifficultyBucket":10,"RatingSystem": "YDS", "BucketName": "5.7"}
+{"Difficulty":"5.7","DifficultyRanking":25, "DifficultyBucket":10,"RatingSystem": "YDS", "BucketName": "5.7"}
+{"Difficulty":"5.7+","DifficultyRanking":26, "DifficultyBucket":10,"RatingSystem": "YDS", "BucketName": "5.7"}
+{"Difficulty":"5.8-","DifficultyRanking":27, "DifficultyBucket":11,"RatingSystem": "YDS", "BucketName": "5.8"}
+{"Difficulty":"5.8","DifficultyRanking":28, "DifficultyBucket":11,"RatingSystem": "YDS", "BucketName": "5.8"}
+{"Difficulty":"5.8+","DifficultyRanking":29, "DifficultyBucket":11,"RatingSystem": "YDS", "BucketName": "5.8"}
+{"Difficulty":"5.9-","DifficultyRanking":30, "DifficultyBucket":12,"RatingSystem": "YDS", "BucketName": "5.9"}
+{"Difficulty":"5.9","DifficultyRanking":31, "DifficultyBucket":12,"RatingSystem": "YDS", "BucketName": "5.9"}
+{"Difficulty":"5.9+","DifficultyRanking":32, "DifficultyBucket":12,"RatingSystem": "YDS", "BucketName": "5.9"}
+{"Difficulty":"5.10a","DifficultyRanking":33, "DifficultyBucket":13,"RatingSystem": "YDS", "BucketName": "5.10-"}
+{"Difficulty":"5.10-","DifficultyRanking":34, "DifficultyBucket":13,"RatingSystem": "YDS", "BucketName": "5.10-"}
+{"Difficulty":"5.10a/b","DifficultyRanking":35, "DifficultyBucket":13,"RatingSystem": "YDS", "BucketName": "5.10-"}
+{"Difficulty":"5.10b","DifficultyRanking":36, "DifficultyBucket":13,"RatingSystem": "YDS", "BucketName": "5.10-"}
+{"Difficulty":"5.10","DifficultyRanking":37, "DifficultyBucket":13,"RatingSystem": "YDS", "BucketName": "5.10-"}
+{"Difficulty":"5.10b/c","DifficultyRanking":38, "DifficultyBucket":14,"RatingSystem": "YDS", "BucketName": "5.10+"}
+{"Difficulty":"5.10c","DifficultyRanking":39, "DifficultyBucket":14,"RatingSystem": "YDS", "BucketName": "5.10+"}
+{"Difficulty":"5.10+","DifficultyRanking":40, "DifficultyBucket":14,"RatingSystem": "YDS", "BucketName": "5.10+"}
+{"Difficulty":"5.10c/d","DifficultyRanking":41, "DifficultyBucket":14,"RatingSystem": "YDS", "BucketName": "5.10+"}
+{"Difficulty":"5.10d","DifficultyRanking":42, "DifficultyBucket":14,"RatingSystem": "YDS", "BucketName": "5.10+"}
+{"Difficulty":"5.11a","DifficultyRanking":43, "DifficultyBucket":15,"RatingSystem": "YDS", "BucketName": "5.11-"}
+{"Difficulty":"5.11-","DifficultyRanking":44, "DifficultyBucket":15,"RatingSystem": "YDS", "BucketName": "5.11-"}
+{"Difficulty":"5.11a/b","DifficultyRanking":45, "DifficultyBucket":15,"RatingSystem": "YDS", "BucketName": "5.11-"}
+{"Difficulty":"5.11b","DifficultyRanking":46, "DifficultyBucket":15,"RatingSystem": "YDS", "BucketName": "5.11-"}
+{"Difficulty":"5.11","DifficultyRanking":47, "DifficultyBucket":15,"RatingSystem": "YDS", "BucketName": "5.11-"}
+{"Difficulty":"5.11b/c","DifficultyRanking":48, "DifficultyBucket":16,"RatingSystem": "YDS", "BucketName": "5.11+"}
+{"Difficulty":"5.11c","DifficultyRanking":49, "DifficultyBucket":16,"RatingSystem": "YDS", "BucketName": "5.11+"}
+{"Difficulty":"5.11+","DifficultyRanking":50, "DifficultyBucket":16,"RatingSystem": "YDS", "BucketName": "5.11+"}
+{"Difficulty":"5.11c/d","DifficultyRanking":51, "DifficultyBucket":16,"RatingSystem": "YDS", "BucketName": "5.11+"}
+{"Difficulty":"5.11d","DifficultyRanking":52, "DifficultyBucket":16,"RatingSystem": "YDS", "BucketName": "5.11+"}
+{"Difficulty":"5.12a","DifficultyRanking":53, "DifficultyBucket":17,"RatingSystem": "YDS", "BucketName": "5.12-"}
+{"Difficulty":"5.12-","DifficultyRanking":54, "DifficultyBucket":17,"RatingSystem": "YDS", "BucketName": "5.12-"}
+{"Difficulty":"5.12a/b","DifficultyRanking":55, "DifficultyBucket":17,"RatingSystem": "YDS", "BucketName": "5.12-"}
+{"Difficulty":"5.12b","DifficultyRanking":56, "DifficultyBucket":17,"RatingSystem": "YDS", "BucketName": "5.12-"}
+{"Difficulty":"5.12","DifficultyRanking":57, "DifficultyBucket":17,"RatingSystem": "YDS", "BucketName": "5.12-"}
+{"Difficulty":"5.12b/c","DifficultyRanking":58, "DifficultyBucket":18,"RatingSystem": "YDS", "BucketName": "5.12+"}
+{"Difficulty":"5.12c","DifficultyRanking":59, "DifficultyBucket":18,"RatingSystem": "YDS", "BucketName": "5.12+"}
+{"Difficulty":"5.12+","DifficultyRanking":60, "DifficultyBucket":18,"RatingSystem": "YDS", "BucketName": "5.12+"}
+{"Difficulty":"5.12c/d","DifficultyRanking":61, "DifficultyBucket":18,"RatingSystem": "YDS", "BucketName": "5.12+"}
+{"Difficulty":"5.12d","DifficultyRanking":62, "DifficultyBucket":18,"RatingSystem": "YDS", "BucketName": "5.12+"}
+{"Difficulty":"5.13a","DifficultyRanking":63, "DifficultyBucket":19,"RatingSystem": "YDS", "BucketName": "5.13-"}
+{"Difficulty":"5.13-","DifficultyRanking":64, "DifficultyBucket":19,"RatingSystem": "YDS", "BucketName": "5.13-"}
+{"Difficulty":"5.13a/b","DifficultyRanking":65, "DifficultyBucket":19,"RatingSystem": "YDS", "BucketName": "5.13-"}
+{"Difficulty":"5.13b","DifficultyRanking":66, "DifficultyBucket":19,"RatingSystem": "YDS", "BucketName": "5.13-"}
+{"Difficulty":"5.13","DifficultyRanking":67, "DifficultyBucket":19,"RatingSystem": "YDS", "BucketName": "5.13-"}
+{"Difficulty":"5.13b/c","DifficultyRanking":68, "DifficultyBucket":20,"RatingSystem": "YDS", "BucketName": "5.13+"}
+{"Difficulty":"5.13c","DifficultyRanking":69, "DifficultyBucket":20,"RatingSystem": "YDS", "BucketName": "5.13+"}
+{"Difficulty":"5.13+","DifficultyRanking":70, "DifficultyBucket":20,"RatingSystem": "YDS", "BucketName": "5.13+"}
+{"Difficulty":"5.13c/d","DifficultyRanking":71, "DifficultyBucket":20,"RatingSystem": "YDS", "BucketName": "5.13+"}
+{"Difficulty":"5.13d","DifficultyRanking":72, "DifficultyBucket":20,"RatingSystem": "YDS", "BucketName": "5.13+"}
+{"Difficulty":"5.14a","DifficultyRanking":73, "DifficultyBucket":21,"RatingSystem": "YDS", "BucketName": "5.14-"}
+{"Difficulty":"5.14-","DifficultyRanking":74, "DifficultyBucket":21,"RatingSystem": "YDS", "BucketName": "5.14-"}
+{"Difficulty":"5.14a/b","DifficultyRanking":75, "DifficultyBucket":21,"RatingSystem": "YDS", "BucketName": "5.14-"}
+{"Difficulty":"5.14b","DifficultyRanking":76, "DifficultyBucket":21,"RatingSystem": "YDS", "BucketName": "5.14-"}
+{"Difficulty":"5.14","DifficultyRanking":77, "DifficultyBucket":21,"RatingSystem": "YDS", "BucketName": "5.14-"}
+{"Difficulty":"5.14b/c","DifficultyRanking":78, "DifficultyBucket":22,"RatingSystem": "YDS", "BucketName": "5.14+"}
+{"Difficulty":"5.14c","DifficultyRanking":79, "DifficultyBucket":22,"RatingSystem": "YDS", "BucketName": "5.14+"}
+{"Difficulty":"5.14+","DifficultyRanking":80, "DifficultyBucket":22,"RatingSystem": "YDS", "BucketName": "5.14+"}
+{"Difficulty":"5.14c/d","DifficultyRanking":81, "DifficultyBucket":22,"RatingSystem": "YDS", "BucketName": "5.14+"}
+{"Difficulty":"5.14d","DifficultyRanking":82, "DifficultyBucket":22,"RatingSystem": "YDS", "BucketName": "5.14+"}
+{"Difficulty":"5.15a","DifficultyRanking":83, "DifficultyBucket":23,"RatingSystem": "YDS", "BucketName": "5.15-"}
+{"Difficulty":"5.15-","DifficultyRanking":84, "DifficultyBucket":23,"RatingSystem": "YDS", "BucketName": "5.15-"}
+{"Difficulty":"5.15a/b","DifficultyRanking":85, "DifficultyBucket":23,"RatingSystem": "YDS", "BucketName": "5.15-"}
+{"Difficulty":"5.15b","DifficultyRanking":86, "DifficultyBucket":23,"RatingSystem": "YDS", "BucketName": "5.15-"}
+{"Difficulty":"5.15","DifficultyRanking":87, "DifficultyBucket":23,"RatingSystem": "YDS", "BucketName": "5.15-"}
+{"Difficulty":"5.15b/c","DifficultyRanking":88, "DifficultyBucket":24,"RatingSystem": "YDS", "BucketName": "5.15+"}
+{"Difficulty":"5.15c","DifficultyRanking":89, "DifficultyBucket":24,"RatingSystem": "YDS", "BucketName": "5.15+"}
+{"Difficulty":"5.15+","DifficultyRanking":90, "DifficultyBucket":24,"RatingSystem": "YDS", "BucketName": "5.15+"}
+{"Difficulty":"5.15c/d","DifficultyRanking":91, "DifficultyBucket":24,"RatingSystem": "YDS", "BucketName": "5.15+"}
+{"Difficulty":"5.15d","DifficultyRanking":92, "DifficultyBucket":24,"RatingSystem": "YDS", "BucketName": "5.15+"}
+{"Difficulty":"V-easy","DifficultyRanking":0, "DifficultyBucket":0,"RatingSystem": "V", "BucketName": "V-easy"}
+{"Difficulty":"V0-","DifficultyRanking":1, "DifficultyBucket":1,"RatingSystem": "V", "BucketName": "V0"}
+{"Difficulty":"V0","DifficultyRanking":2, "DifficultyBucket":1,"RatingSystem": "V", "BucketName": "V0"}
+{"Difficulty":"V0+","DifficultyRanking":3, "DifficultyBucket":1,"RatingSystem": "V", "BucketName": "V0"}
+{"Difficulty":"V0-1","DifficultyRanking":4, "DifficultyBucket":1,"RatingSystem": "V", "BucketName": "V0"}
+{"Difficulty":"V1-","DifficultyRanking":5, "DifficultyBucket":2,"RatingSystem": "V", "BucketName": "V1"}
+{"Difficulty":"V1","DifficultyRanking":6, "DifficultyBucket":2,"RatingSystem": "V", "BucketName": "V1"}
+{"Difficulty":"V1+","DifficultyRanking":7, "DifficultyBucket":2,"RatingSystem": "V", "BucketName": "V1"}
+{"Difficulty":"V1-2","DifficultyRanking":8, "DifficultyBucket":2,"RatingSystem": "V", "BucketName": "V1"}
+{"Difficulty":"V2-","DifficultyRanking":9, "DifficultyBucket":3,"RatingSystem": "V", "BucketName": "V2"}
+{"Difficulty":"V2","DifficultyRanking":10, "DifficultyBucket":3,"RatingSystem": "V", "BucketName": "V2"}
+{"Difficulty":"V2+","DifficultyRanking":11, "DifficultyBucket":3,"RatingSystem": "V", "BucketName": "V2"}
+{"Difficulty":"V2-3","DifficultyRanking":12, "DifficultyBucket":3,"RatingSystem": "V", "BucketName": "V2"}
+{"Difficulty":"V3-","DifficultyRanking":13, "DifficultyBucket":4,"RatingSystem": "V", "BucketName": "V3"}
+{"Difficulty":"V3","DifficultyRanking":14, "DifficultyBucket":4,"RatingSystem": "V", "BucketName": "V3"}
+{"Difficulty":"V3+","DifficultyRanking":15, "DifficultyBucket":4,"RatingSystem": "V", "BucketName": "V3"}
+{"Difficulty":"V3-4","DifficultyRanking":16, "DifficultyBucket":4,"RatingSystem": "V", "BucketName": "V3"}
+{"Difficulty":"V4-","DifficultyRanking":17, "DifficultyBucket":5,"RatingSystem": "V", "BucketName": "V4"}
+{"Difficulty":"V4","DifficultyRanking":18, "DifficultyBucket":5,"RatingSystem": "V", "BucketName": "V4"}
+{"Difficulty":"V4+","DifficultyRanking":19, "DifficultyBucket":5,"RatingSystem": "V", "BucketName": "V4"}
+{"Difficulty":"V4-5","DifficultyRanking":20, "DifficultyBucket":5,"RatingSystem": "V", "BucketName": "V4"}
+{"Difficulty":"V5-","DifficultyRanking":21, "DifficultyBucket":6,"RatingSystem": "V", "BucketName": "V5"}
+{"Difficulty":"V5","DifficultyRanking":22, "DifficultyBucket":6,"RatingSystem": "V", "BucketName": "V5"}
+{"Difficulty":"V5+","DifficultyRanking":23, "DifficultyBucket":6,"RatingSystem": "V", "BucketName": "V5"}
+{"Difficulty":"V5-6","DifficultyRanking":24, "DifficultyBucket":6,"RatingSystem": "V", "BucketName": "V5"}
+{"Difficulty":"V6-","DifficultyRanking":25, "DifficultyBucket":7,"RatingSystem": "V", "BucketName": "V6"}
+{"Difficulty":"V6","DifficultyRanking":26, "DifficultyBucket":7,"RatingSystem": "V", "BucketName": "V6"}
+{"Difficulty":"V6+","DifficultyRanking":27, "DifficultyBucket":7,"RatingSystem": "V", "BucketName": "V6"}
+{"Difficulty":"V6-7","DifficultyRanking":28, "DifficultyBucket":7,"RatingSystem": "V", "BucketName": "V6"}
+{"Difficulty":"V7-","DifficultyRanking":29, "DifficultyBucket":8,"RatingSystem": "V", "BucketName": "V7"}
+{"Difficulty":"V7","DifficultyRanking":30, "DifficultyBucket":8,"RatingSystem": "V", "BucketName": "V7"}
+{"Difficulty":"V7+","DifficultyRanking":31, "DifficultyBucket":8,"RatingSystem": "V", "BucketName": "V7"}
+{"Difficulty":"V7-8","DifficultyRanking":32, "DifficultyBucket":8,"RatingSystem": "V", "BucketName": "V7"}
+{"Difficulty":"V8-","DifficultyRanking":33, "DifficultyBucket":9,"RatingSystem": "V", "BucketName": "V8"}
+{"Difficulty":"V8","DifficultyRanking":34, "DifficultyBucket":9,"RatingSystem": "V", "BucketName": "V8"}
+{"Difficulty":"V8+","DifficultyRanking":35, "DifficultyBucket":9,"RatingSystem": "V", "BucketName": "V8"}
+{"Difficulty":"V8-9","DifficultyRanking":36, "DifficultyBucket":9,"RatingSystem": "V", "BucketName": "V8"}
+{"Difficulty":"V9-","DifficultyRanking":37, "DifficultyBucket":10,"RatingSystem": "V", "BucketName": "V9"}
+{"Difficulty":"V9","DifficultyRanking":38, "DifficultyBucket":10,"RatingSystem": "V", "BucketName": "V9"}
+{"Difficulty":"V9+","DifficultyRanking":39, "DifficultyBucket":10,"RatingSystem": "V", "BucketName": "V9"}
+{"Difficulty":"V9-10","DifficultyRanking":40, "DifficultyBucket":10,"RatingSystem": "V", "BucketName": "V9"}
+{"Difficulty":"V10-","DifficultyRanking":41, "DifficultyBucket":11,"RatingSystem": "V", "BucketName": "V10"}
+{"Difficulty":"V10","DifficultyRanking":42, "DifficultyBucket":11,"RatingSystem": "V", "BucketName": "V10"}
+{"Difficulty":"V10+","DifficultyRanking":43, "DifficultyBucket":11,"RatingSystem": "V", "BucketName": "V10"}
+{"Difficulty":"V10-11","DifficultyRanking":44, "DifficultyBucket":11,"RatingSystem": "V", "BucketName": "V10"}
+{"Difficulty":"V11-","DifficultyRanking":45, "DifficultyBucket":12,"RatingSystem": "V", "BucketName": "V11"}
+{"Difficulty":"V11","DifficultyRanking":46, "DifficultyBucket":12,"RatingSystem": "V", "BucketName": "V11"}
+{"Difficulty":"V11+","DifficultyRanking":47, "DifficultyBucket":12,"RatingSystem": "V", "BucketName": "V11"}
+{"Difficulty":"V11-12","DifficultyRanking":48, "DifficultyBucket":12,"RatingSystem": "V", "BucketName": "V11"}
+{"Difficulty":"V12-","DifficultyRanking":49, "DifficultyBucket":13,"RatingSystem": "V", "BucketName": "V12"}
+{"Difficulty":"V12","DifficultyRanking":50, "DifficultyBucket":13,"RatingSystem": "V", "BucketName": "V12"}
+{"Difficulty":"V12+","DifficultyRanking":51, "DifficultyBucket":13,"RatingSystem": "V", "BucketName": "V12"}
+{"Difficulty":"V12-13","DifficultyRanking":52, "DifficultyBucket":13,"RatingSystem": "V", "BucketName": "V12"}
+{"Difficulty":"V13-","DifficultyRanking":53, "DifficultyBucket":14,"RatingSystem": "V", "BucketName": "V13"}
+{"Difficulty":"V13","DifficultyRanking":54, "DifficultyBucket":14,"RatingSystem": "V", "BucketName": "V13"}
+{"Difficulty":"V13+","DifficultyRanking":55, "DifficultyBucket":14,"RatingSystem": "V", "BucketName": "V13"}
+{"Difficulty":"V13-14","DifficultyRanking":56, "DifficultyBucket":14,"RatingSystem": "V", "BucketName": "V13"}
+{"Difficulty":"V14-","DifficultyRanking":57, "DifficultyBucket":15,"RatingSystem": "V", "BucketName": "V14"}
+{"Difficulty":"V14","DifficultyRanking":58, "DifficultyBucket":15,"RatingSystem": "V", "BucketName": "V14"}
+{"Difficulty":"V14+","DifficultyRanking":59, "DifficultyBucket":15,"RatingSystem": "V", "BucketName": "V14"}
+{"Difficulty":"V14-15","DifficultyRanking":60, "DifficultyBucket":15,"RatingSystem": "V", "BucketName": "V14"}
+{"Difficulty":"V15-","DifficultyRanking":61, "DifficultyBucket":16,"RatingSystem": "V", "BucketName": "V15"}
+{"Difficulty":"V15","DifficultyRanking":62, "DifficultyBucket":16,"RatingSystem": "V", "BucketName": "V15"}
+{"Difficulty":"V15+","DifficultyRanking":63, "DifficultyBucket":16,"RatingSystem": "V", "BucketName": "V15"}
+{"Difficulty":"V15-16","DifficultyRanking":64, "DifficultyBucket":16,"RatingSystem": "V", "BucketName": "V15"}
+{"Difficulty":"V16-","DifficultyRanking":65, "DifficultyBucket":17,"RatingSystem": "V", "BucketName": "V16"}
+{"Difficulty":"V16","DifficultyRanking":66, "DifficultyBucket":17,"RatingSystem": "V", "BucketName": "V16"}
+{"Difficulty":"V16+","DifficultyRanking":67, "DifficultyBucket":17,"RatingSystem": "V", "BucketName": "V16"}
+{"Difficulty":"V16-17","DifficultyRanking":68, "DifficultyBucket":17,"RatingSystem": "V", "BucketName": "V16"}
+{"Difficulty":"V17-","DifficultyRanking":69, "DifficultyBucket":18,"RatingSystem": "V", "BucketName": "V17"}
+{"Difficulty":"V17","DifficultyRanking":70, "DifficultyBucket":18,"RatingSystem": "V", "BucketName": "V17"}
+{"Difficulty":"WI1", "DifficultyRanking":0, "DifficultyBucket":0, "RatingSystem": "WI", "BucketName": "WI1"}
+{"Difficulty":"WI2-", "DifficultyRanking":1, "DifficultyBucket":1, "RatingSystem": "WI", "BucketName": "WI2"}
+{"Difficulty":"WI2", "DifficultyRanking":2, "DifficultyBucket":1, "RatingSystem": "WI", "BucketName": "WI2"}
+{"Difficulty":"WI2+", "DifficultyRanking":3, "DifficultyBucket":1, "RatingSystem": "WI", "BucketName": "WI2"}
+{"Difficulty":"WI2-3", "DifficultyRanking":4, "DifficultyBucket":1, "RatingSystem": "WI", "BucketName": "WI2"}
+{"Difficulty":"WI3-", "DifficultyRanking":5, "DifficultyBucket":2, "RatingSystem": "WI", "BucketName": "WI3"}
+{"Difficulty":"WI3", "DifficultyRanking":6, "DifficultyBucket":2, "RatingSystem": "WI", "BucketName": "WI3"}
+{"Difficulty":"WI3+", "DifficultyRanking":7, "DifficultyBucket":2, "RatingSystem": "WI", "BucketName": "WI3"}
+{"Difficulty":"WI3-4", "DifficultyRanking":8, "DifficultyBucket":2, "RatingSystem": "WI", "BucketName": "WI3"}
+{"Difficulty":"WI4-", "DifficultyRanking":9, "DifficultyBucket":3, "RatingSystem": "WI", "BucketName": "WI4"}
+{"Difficulty":"WI4", "DifficultyRanking":10, "DifficultyBucket":3, "RatingSystem": "WI", "BucketName": "WI4"}
+{"Difficulty":"WI4+", "DifficultyRanking":11, "DifficultyBucket":3, "RatingSystem": "WI", "BucketName": "WI4"}
+{"Difficulty":"WI4-5", "DifficultyRanking":12, "DifficultyBucket":3, "RatingSystem": "WI", "BucketName": "WI4"}
+{"Difficulty":"WI5-", "DifficultyRanking":13, "DifficultyBucket":4, "RatingSystem": "WI", "BucketName": "WI5"}
+{"Difficulty":"WI5", "DifficultyRanking":14, "DifficultyBucket":4, "RatingSystem": "WI", "BucketName": "WI5"}
+{"Difficulty":"WI5+", "DifficultyRanking":15, "DifficultyBucket":4, "RatingSystem": "WI", "BucketName": "WI5"}
+{"Difficulty":"WI5-6", "DifficultyRanking":16, "DifficultyBucket":4, "RatingSystem": "WI", "BucketName": "WI5"}
+{"Difficulty":"WI6-", "DifficultyRanking":17, "DifficultyBucket":5, "RatingSystem": "WI", "BucketName": "WI6"}
+{"Difficulty":"WI6", "DifficultyRanking":18, "DifficultyBucket":5, "RatingSystem": "WI", "BucketName": "WI6"}
+{"Difficulty":"WI6+", "DifficultyRanking":19, "DifficultyBucket":5, "RatingSystem": "WI", "BucketName": "WI6"}
+{"Difficulty":"WI6-7", "DifficultyRanking":20, "DifficultyBucket":5, "RatingSystem": "WI", "BucketName": "WI6"}
+{"Difficulty":"WI7-", "DifficultyRanking":21, "DifficultyBucket":6, "RatingSystem": "WI", "BucketName": "WI7"}
+{"Difficulty":"WI7", "DifficultyRanking":22, "DifficultyBucket":6, "RatingSystem": "WI", "BucketName": "WI7"}
+{"Difficulty":"WI7+", "DifficultyRanking":23, "DifficultyBucket":6, "RatingSystem": "WI", "BucketName": "WI7"}
+{"Difficulty":"WI7-8", "DifficultyRanking":24, "DifficultyBucket":6, "RatingSystem": "WI", "BucketName": "WI7"}
+{"Difficulty":"WI8-", "DifficultyRanking":25, "DifficultyBucket":7, "RatingSystem": "WI", "BucketName": "WI8"}
+{"Difficulty":"WI8", "DifficultyRanking":26, "DifficultyBucket":7, "RatingSystem": "WI", "BucketName": "WI8"}
+{"Difficulty":"AI1", "DifficultyRanking":0, "DifficultyBucket":0, "RatingSystem": "AI", "BucketName": "AI1"}
+{"Difficulty":"AI1-2", "DifficultyRanking":1, "DifficultyBucket":0, "RatingSystem": "AI", "BucketName": "AI1"}
+{"Difficulty":"AI2", "DifficultyRanking":2, "DifficultyBucket":1, "RatingSystem": "AI", "BucketName": "AI2"}
+{"Difficulty":"AI2-3", "DifficultyRanking":3, "DifficultyBucket":1, "RatingSystem": "AI", "BucketName": "AI2"}
+{"Difficulty":"AI3", "DifficultyRanking":4, "DifficultyBucket":2, "RatingSystem": "AI", "BucketName": "AI3"}
+{"Difficulty":"AI3-4", "DifficultyRanking":5, "DifficultyBucket":2, "RatingSystem": "AI", "BucketName": "AI3"}
+{"Difficulty":"AI4", "DifficultyRanking":6, "DifficultyBucket":3, "RatingSystem": "AI", "BucketName": "AI4"}
+{"Difficulty":"AI4-5", "DifficultyRanking":7, "DifficultyBucket":3, "RatingSystem": "AI", "BucketName": "AI4"}
+{"Difficulty":"AI5", "DifficultyRanking":8, "DifficultyBucket":4, "RatingSystem": "AI", "BucketName": "AI5"}
+{"Difficulty":"AI5-6", "DifficultyRanking":9, "DifficultyBucket":4, "RatingSystem": "AI", "BucketName": "AI5"}
+{"Difficulty":"AI6", "DifficultyRanking":10, "DifficultyBucket":5, "RatingSystem": "AI", "BucketName": "AI6"}
+{"Difficulty":"M1","DifficultyRanking":0, "DifficultyBucket":0,"RatingSystem": "M", "BucketName": "M1"}
+{"Difficulty":"M1+","DifficultyRanking":1, "DifficultyBucket":0,"RatingSystem": "M", "BucketName": "M1"}
+{"Difficulty":"M1-2","DifficultyRanking":2, "DifficultyBucket":1,"RatingSystem": "M", "BucketName": "M1"}
+{"Difficulty":"M2-","DifficultyRanking":3, "DifficultyBucket":1,"RatingSystem": "M", "BucketName": "M2"}
+{"Difficulty":"M2","DifficultyRanking":4, "DifficultyBucket":1,"RatingSystem": "M", "BucketName": "M2"}
+{"Difficulty":"M2+","DifficultyRanking":5, "DifficultyBucket":1,"RatingSystem": "M", "BucketName": "M2"}
+{"Difficulty":"M2-3","DifficultyRanking":6, "DifficultyBucket":1,"RatingSystem": "M", "BucketName": "M2"}
+{"Difficulty":"M3-","DifficultyRanking":7, "DifficultyBucket":2,"RatingSystem": "M", "BucketName": "M3"}
+{"Difficulty":"M3","DifficultyRanking":8, "DifficultyBucket":2,"RatingSystem": "M", "BucketName": "M3"}
+{"Difficulty":"M3+","DifficultyRanking":9, "DifficultyBucket":2,"RatingSystem": "M", "BucketName": "M3"}
+{"Difficulty":"M3-4","DifficultyRanking":10, "DifficultyBucket":2,"RatingSystem": "M", "BucketName": "M3"}
+{"Difficulty":"M4-","DifficultyRanking":11, "DifficultyBucket":3,"RatingSystem": "M", "BucketName": "M4"}
+{"Difficulty":"M4","DifficultyRanking":12, "DifficultyBucket":3,"RatingSystem": "M", "BucketName": "M4"}
+{"Difficulty":"M4+","DifficultyRanking":13, "DifficultyBucket":3,"RatingSystem": "M", "BucketName": "M4"}
+{"Difficulty":"M4-5","DifficultyRanking":14, "DifficultyBucket":3,"RatingSystem": "M", "BucketName": "M4"}
+{"Difficulty":"M5-","DifficultyRanking":15, "DifficultyBucket":4,"RatingSystem": "M", "BucketName": "M5"}
+{"Difficulty":"M5","DifficultyRanking":16, "DifficultyBucket":4,"RatingSystem": "M", "BucketName": "M5"}
+{"Difficulty":"M5+","DifficultyRanking":17, "DifficultyBucket":4,"RatingSystem": "M", "BucketName": "M5"}
+{"Difficulty":"M5-6","DifficultyRanking":18, "DifficultyBucket":4,"RatingSystem": "M", "BucketName": "M5"}
+{"Difficulty":"M6-","DifficultyRanking":19, "DifficultyBucket":5,"RatingSystem": "M", "BucketName": "M6"}
+{"Difficulty":"M6","DifficultyRanking":20, "DifficultyBucket":5,"RatingSystem": "M", "BucketName": "M6"}
+{"Difficulty":"M6+","DifficultyRanking":21, "DifficultyBucket":5,"RatingSystem": "M", "BucketName": "M6"}
+{"Difficulty":"M6-7","DifficultyRanking":22, "DifficultyBucket":5,"RatingSystem": "M", "BucketName": "M6"}
+{"Difficulty":"M7-","DifficultyRanking":23, "DifficultyBucket":6,"RatingSystem": "M", "BucketName": "M7"}
+{"Difficulty":"M7","DifficultyRanking":24, "DifficultyBucket":6,"RatingSystem": "M", "BucketName": "M7"}
+{"Difficulty":"M7+","DifficultyRanking":25, "DifficultyBucket":6,"RatingSystem": "M", "BucketName": "M7"}
+{"Difficulty":"M7-8","DifficultyRanking":26, "DifficultyBucket":6,"RatingSystem": "M", "BucketName": "M7"}
+{"Difficulty":"M8-","DifficultyRanking":27, "DifficultyBucket":7,"RatingSystem": "M", "BucketName": "M8"}
+{"Difficulty":"M8","DifficultyRanking":28, "DifficultyBucket":7,"RatingSystem": "M", "BucketName": "M8"}
+{"Difficulty":"M8+","DifficultyRanking":29, "DifficultyBucket":7,"RatingSystem": "M", "BucketName": "M8"}
+{"Difficulty":"M8-9","DifficultyRanking":30, "DifficultyBucket":7,"RatingSystem": "M", "BucketName": "M8"}
+{"Difficulty":"M9-","DifficultyRanking":31, "DifficultyBucket":8,"RatingSystem": "M", "BucketName": "M9"}
+{"Difficulty":"M9","DifficultyRanking":32, "DifficultyBucket":8,"RatingSystem": "M", "BucketName": "M9"}
+{"Difficulty":"M9+","DifficultyRanking":33, "DifficultyBucket":8,"RatingSystem": "M", "BucketName": "M9"}
+{"Difficulty":"M9-10","DifficultyRanking":34, "DifficultyBucket":8,"RatingSystem": "M", "BucketName": "M9"}
+{"Difficulty":"M10-","DifficultyRanking":35, "DifficultyBucket":9,"RatingSystem": "M", "BucketName": "M10"}
+{"Difficulty":"M10","DifficultyRanking":36, "DifficultyBucket":9,"RatingSystem": "M", "BucketName": "M10"}
+{"Difficulty":"M10+","DifficultyRanking":37, "DifficultyBucket":9,"RatingSystem": "M", "BucketName": "M10"}
+{"Difficulty":"M10-11","DifficultyRanking":38, "DifficultyBucket":9,"RatingSystem": "M", "BucketName": "M10"}
+{"Difficulty":"M11-","DifficultyRanking":39, "DifficultyBucket":10,"RatingSystem": "M", "BucketName": "M11"}
+{"Difficulty":"M11","DifficultyRanking":40, "DifficultyBucket":10,"RatingSystem": "M", "BucketName": "M11"}
+{"Difficulty":"M11+","DifficultyRanking":41, "DifficultyBucket":10,"RatingSystem": "M", "BucketName": "M11"}
+{"Difficulty":"M12-","DifficultyRanking":42, "DifficultyBucket":11,"RatingSystem": "M", "BucketName": "M12"}
+{"Difficulty":"M12","DifficultyRanking":43, "DifficultyBucket":11,"RatingSystem": "M", "BucketName": "M12"}
+{"Difficulty":"M12+","DifficultyRanking":44, "DifficultyBucket":11,"RatingSystem": "M", "BucketName": "M12"}
+{"Difficulty":"M13-","DifficultyRanking":45, "DifficultyBucket":12,"RatingSystem": "M", "BucketName": "M13"}
+{"Difficulty":"M13","DifficultyRanking":46, "DifficultyBucket":12,"RatingSystem": "M", "BucketName": "M13"}
+{"Difficulty":"M13+","DifficultyRanking":47, "DifficultyBucket":12,"RatingSystem": "M", "BucketName": "M13"}
+{"Difficulty":"M14-","DifficultyRanking":48, "DifficultyBucket":13,"RatingSystem": "M", "BucketName": "M14"}
+{"Difficulty":"M14","DifficultyRanking":49, "DifficultyBucket":13,"RatingSystem": "M", "BucketName": "M14"}
+{"Difficulty":"M14+","DifficultyRanking":50, "DifficultyBucket":13,"RatingSystem": "M", "BucketName": "M14"}
+{"Difficulty":"M15-","DifficultyRanking":51, "DifficultyBucket":14,"RatingSystem": "M", "BucketName": "M15"}
+{"Difficulty":"M15","DifficultyRanking":52, "DifficultyBucket":14,"RatingSystem": "M", "BucketName": "M15"}
+{"Difficulty":"M15+","DifficultyRanking":53, "DifficultyBucket":14,"RatingSystem": "M", "BucketName": "M15"}
+{"Difficulty":"M16-","DifficultyRanking":54, "DifficultyBucket":15,"RatingSystem": "M", "BucketName": "M16"}
+{"Difficulty":"M16","DifficultyRanking":55, "DifficultyBucket":15,"RatingSystem": "M", "BucketName": "M16"}
+{"Difficulty":"M16+","DifficultyRanking":56, "DifficultyBucket":15,"RatingSystem": "M", "BucketName": "M16"}
+{"Difficulty":"Easy Snow","DifficultyRanking":0, "DifficultyBucket":0,"RatingSystem": "Snow", "BucketName": "Easy Snow"}
+{"Difficulty":"Mod. Snow","DifficultyRanking":1, "DifficultyBucket":1,"RatingSystem": "Snow", "BucketName": "Mod. Snow"}
+{"Difficulty":"Steep Snow","DifficultyRanking":2, "DifficultyBucket":2,"RatingSystem": "Snow", "BucketName": "Steep Snow"}
+{"Difficulty":"A0","DifficultyRanking":0, "DifficultyBucket":0,"RatingSystem": "A", "BucketName": "A0"}
+{"Difficulty":"A0+","DifficultyRanking":1, "DifficultyBucket":0,"RatingSystem": "A", "BucketName": "A0"}
+{"Difficulty":"A0-1","DifficultyRanking":2, "DifficultyBucket":0,"RatingSystem": "A", "BucketName": "A0"}
+{"Difficulty":"A1-","DifficultyRanking":3, "DifficultyBucket":1,"RatingSystem": "A", "BucketName": "A1"}
+{"Difficulty":"A1","DifficultyRanking":4, "DifficultyBucket":1,"RatingSystem": "A", "BucketName": "A1"}
+{"Difficulty":"A1+","DifficultyRanking":5, "DifficultyBucket":1,"RatingSystem": "A", "BucketName": "A1"}
+{"Difficulty":"A1-2","DifficultyRanking":6, "DifficultyBucket":1,"RatingSystem": "A", "BucketName": "A1"}
+{"Difficulty":"A2-","DifficultyRanking":7, "DifficultyBucket":2,"RatingSystem": "A", "BucketName": "A2"}
+{"Difficulty":"A2","DifficultyRanking":8, "DifficultyBucket":2,"RatingSystem": "A", "BucketName": "A2"}
+{"Difficulty":"A2+","DifficultyRanking":9, "DifficultyBucket":2,"RatingSystem": "A", "BucketName": "A2"}
+{"Difficulty":"A2-3","DifficultyRanking":10, "DifficultyBucket":2,"RatingSystem": "A", "BucketName": "A2"}
+{"Difficulty":"A3-","DifficultyRanking":11, "DifficultyBucket":3,"RatingSystem": "A", "BucketName": "A3"}
+{"Difficulty":"A3","DifficultyRanking":12, "DifficultyBucket":3,"RatingSystem": "A", "BucketName": "A3"}
+{"Difficulty":"A3+","DifficultyRanking":13, "DifficultyBucket":3,"RatingSystem": "A", "BucketName": "A3"}
+{"Difficulty":"A3-4","DifficultyRanking":14, "DifficultyBucket":3,"RatingSystem": "A", "BucketName": "A3"}
+{"Difficulty":"A4-","DifficultyRanking":15, "DifficultyBucket":4,"RatingSystem": "A", "BucketName": "A4"}
+{"Difficulty":"A4","DifficultyRanking":16, "DifficultyBucket":4,"RatingSystem": "A", "BucketName": "A4"}
+{"Difficulty":"A4+","DifficultyRanking":17, "DifficultyBucket":4,"RatingSystem": "A", "BucketName": "A4"}
+{"Difficulty":"A4-5","DifficultyRanking":18, "DifficultyBucket":4,"RatingSystem": "A", "BucketName": "A4"}
+{"Difficulty":"A5-","DifficultyRanking":19, "DifficultyBucket":5,"RatingSystem": "A", "BucketName": "A5"}
+{"Difficulty":"A5","DifficultyRanking":20, "DifficultyBucket":5,"RatingSystem": "A", "BucketName": "A5"}
+{"Difficulty":"A5+","DifficultyRanking":21, "DifficultyBucket":5,"RatingSystem": "A", "BucketName": "A5"}
+{"Difficulty":"C0","DifficultyRanking":0, "DifficultyBucket":0,"RatingSystem": "C", "BucketName": "C0"}
+{"Difficulty":"C0+","DifficultyRanking":1, "DifficultyBucket":0,"RatingSystem": "C", "BucketName": "C0"}
+{"Difficulty":"C0-1","DifficultyRanking":2, "DifficultyBucket":0,"RatingSystem": "C", "BucketName": "C0"}
+{"Difficulty":"C1-","DifficultyRanking":3, "DifficultyBucket":1,"RatingSystem": "C", "BucketName": "C1"}
+{"Difficulty":"C1","DifficultyRanking":4, "DifficultyBucket":1,"RatingSystem": "C", "BucketName": "C1"}
+{"Difficulty":"C1+","DifficultyRanking":5, "DifficultyBucket":1,"RatingSystem": "C", "BucketName": "C1"}
+{"Difficulty":"C1-2","DifficultyRanking":6, "DifficultyBucket":1,"RatingSystem": "C", "BucketName": "C1"}
+{"Difficulty":"C2-","DifficultyRanking":7, "DifficultyBucket":2,"RatingSystem": "C", "BucketName": "C2"}
+{"Difficulty":"C2","DifficultyRanking":8, "DifficultyBucket":2,"RatingSystem": "C", "BucketName": "C2"}
+{"Difficulty":"C2+","DifficultyRanking":9, "DifficultyBucket":2,"RatingSystem": "C", "BucketName": "C2"}
+{"Difficulty":"C2-3","DifficultyRanking":10, "DifficultyBucket":2,"RatingSystem": "C", "BucketName": "C2"}
+{"Difficulty":"C3-","DifficultyRanking":11, "DifficultyBucket":3,"RatingSystem": "C", "BucketName": "C3"}
+{"Difficulty":"C3","DifficultyRanking":12, "DifficultyBucket":3,"RatingSystem": "C", "BucketName": "C3"}
+{"Difficulty":"C3+","DifficultyRanking":13, "DifficultyBucket":3,"RatingSystem": "C", "BucketName": "C3"}
+{"Difficulty":"C3-4","DifficultyRanking":14, "DifficultyBucket":3,"RatingSystem": "C", "BucketName": "C3"}
+{"Difficulty":"C4-","DifficultyRanking":15, "DifficultyBucket":4,"RatingSystem": "C", "BucketName": "C4"}
+{"Difficulty":"C4","DifficultyRanking":16, "DifficultyBucket":4,"RatingSystem": "C", "BucketName": "C4"}
+{"Difficulty":"C4+","DifficultyRanking":17, "DifficultyBucket":4,"RatingSystem": "C", "BucketName": "C4"}
+{"Difficulty":"C4-5","DifficultyRanking":18, "DifficultyBucket":4,"RatingSystem": "C", "BucketName": "C4"}
+{"Difficulty":"C5-","DifficultyRanking":19, "DifficultyBucket":5,"RatingSystem": "C", "BucketName": "C5"}
+{"Difficulty":"C5","DifficultyRanking":20, "DifficultyBucket":5,"RatingSystem": "C", "BucketName": "C5"}
+{"Difficulty":"C5+","DifficultyRanking":21, "DifficultyBucket":5,"RatingSystem": "C", "BucketName": "C5"}

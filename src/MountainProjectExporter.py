@@ -16,11 +16,11 @@ class MountainExporter(object):
 
         if dataType.upper() not in {"Areas".upper(), "AreaComments".upper(), "Routes".upper(), "RouteComments".upper(),
                                     "RouteTicks".upper(), "RouteRatings".upper(), "RouteToDos".upper(),
-                                    "DifficultyReference".upper()}:
+                                    "DifficultyReference".upper(), "SeverityReference".upper()}:
 
             raise ValueError(f"Invalid value specified for parameter dataType: {dataType}."
                              f" Allowed values are [Areas, AreaComments, Routes, RouteComments, "
-                             f"RouteTicks, RouteRatings, RouteToDos, DifficultyReference].")
+                             f"RouteTicks, RouteRatings, RouteToDos, DifficultyReference, SeverityReference].")
 
         self.connection = psycopg2.connect(user=username,
                                            password=password,
@@ -47,6 +47,8 @@ class MountainExporter(object):
             self.postRouteToDosToSQL()
         elif self.dataType.upper() == "DifficultyReference".upper():
             self.postDifficultyReferenceToSQL()
+        elif self.dataType.upper() == "SeverityReference".upper():
+            self.postSeverityReferenceToSQL()
         else:
             pass
 
@@ -220,6 +222,20 @@ class MountainExporter(object):
         file.close()
         self.connection.commit()
 
+    def postSeverityReferenceToSQL(self) -> None:
+        insertReferenceQuery = """
+            INSERT INTO SeverityReference (
+                Severity,
+                SeverityRanking
+                )
+            VALUES %s;
+        """
+
+        file = open(self.file, "r")
+        self.sendDataToSQL(file, insertReferenceQuery)
+        file.close()
+        self.connection.commit()
+
     def sendDataToSQL(self, file: typing.IO, query: str) -> None:
         for lineNumber, line in enumerate(file):
             if lineNumber % self.chunkSize == 0:
@@ -239,14 +255,15 @@ if __name__ == "__main__":
     password = os.getenv("POSTGRESQL_PASSWORD")
 
     files = [
-        # ("Areas", "../data/Clean/Areas.json"),
-        # ("AreaComments", "../data/Clean/AreaComments.json"),
-        # ("Routes", "../data/Clean/Routes.json"),
-        # ("RouteComments", "../data/Clean/RouteComments.json"),
-        # ("RouteTicks", "../data/Clean/RouteTicks.json"),
-        # ("RouteRatings", "../data/Clean/RouteRatings.json"),
-        # ("RouteToDos", "../data/Clean/RouteToDos.json"),
-        ("DifficultyReference", "../data/Reference/DifficultyReference.json")
+        ("Areas", "../data/Clean/Areas.json"),
+        ("AreaComments", "../data/Clean/AreaComments.json"),
+        ("Routes", "../data/Clean/Routes.json"),
+        ("RouteComments", "../data/Clean/RouteComments.json"),
+        ("RouteTicks", "../data/Clean/RouteTicks.json"),
+        ("RouteRatings", "../data/Clean/RouteRatings.json"),
+        ("RouteToDos", "../data/Clean/RouteToDos.json"),
+        ("DifficultyReference", "../data/Reference/DifficultyReference.json"),
+        ("SeverityReference", "../data/Reference/SeverityReference.json")
     ]
 
     exporters = [
