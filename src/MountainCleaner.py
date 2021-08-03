@@ -268,7 +268,7 @@ class MountainCleaner(object):
                         typeInfo = routeTypeInfo.pop(0)
 
                         if typeInfo.strip().lower() in types:
-                            routeType = "Toprope" if typeInfo.strip() == "TR" else typeInfo.strip()
+                            routeType = "Top Rope" if typeInfo.strip() == "TR" else typeInfo.strip()
                             if "Type" in curatedRouteInfo.keys():
                                 curatedRouteInfo["Type"] += f", {routeType}"
                             else:
