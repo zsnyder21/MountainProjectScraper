@@ -576,13 +576,13 @@ if __name__ == "__main__":
         path = folder[0]
 
         areaCleaner = MountainCleaner(path + r"/Areas.json", "Areas", r"../data/Clean/")
-        routeCleaner = MountainCleaner(path + r"/Routes.json", "Routes", r"../data/Clean/Test/")
-        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"../data/Clean/test/")
+        routeCleaner = MountainCleaner(path + r"/Routes.json", "Routes", r"../data/Clean/")
+        ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"../data/Clean/")
         ratingsCleaner = MountainCleaner(path + r"/Stats.json", "Ratings", r"../data/Clean/")
         toDosCleaner = MountainCleaner(path + r"/Stats.json", "ToDos", r"../data/Clean/")
 
-        # areaCleaner.clean()
+        areaCleaner.clean()
         routeCleaner.clean()
-        # ticksCleaner.clean()
-        # ratingsCleaner.clean()
-        # toDosCleaner.clean()
+        ticksCleaner.clean()
+        ratingsCleaner.clean()
+        toDosCleaner.clean()
