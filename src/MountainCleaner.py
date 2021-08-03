@@ -230,7 +230,7 @@ class MountainCleaner(object):
         routeKeys = ["RouteName", "Difficulty_YDS", "Difficulty_French", "Difficulty_ADL", "Severity", "Type",
                      "Height", "HeightUnits", "Pitches", "Grade", "Rating", "VoteCount", "Description", "Location",
                      "Protection", "FirstAscent", "FirstAscentYear", "FirstFreeAscent", "FirstFreeAscentYear"]
-        types = {"trad", "sport", "toprope", "boulder", "ice", "aid", "mixed", "alpine"}
+        types = {"trad", "sport", "tr", "boulder", "ice", "aid", "mixed", "alpine"}
         severities = {"G", "PG", "PG13", "PG-13", "R", "X"}
         gradeMap = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7}
 
@@ -268,10 +268,11 @@ class MountainCleaner(object):
                         typeInfo = routeTypeInfo.pop(0)
 
                         if typeInfo.strip().lower() in types:
+                            routeType = "Toprope" if typeInfo.strip() == "TR" else typeInfo.strip()
                             if "Type" in curatedRouteInfo.keys():
-                                curatedRouteInfo["Type"] += f", {typeInfo.strip()}"
+                                curatedRouteInfo["Type"] += f", {routeType}"
                             else:
-                                curatedRouteInfo["Type"] = typeInfo.strip()
+                                curatedRouteInfo["Type"] = routeType
 
                         if re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip().lower()):
                             heightInfo = re.match(pattern=r"(\d+\sft|\d+\sm)", string=typeInfo.strip()).group(0).split()
