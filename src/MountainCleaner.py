@@ -222,7 +222,7 @@ class MountainCleaner(object):
             }
 
             self.exportToJSON(routeInfo, "Route")
-            self.processRouteComments(routeId, soup)
+            # self.processRouteComments(routeId, soup)
 
         file.close()
 
@@ -230,7 +230,7 @@ class MountainCleaner(object):
         routeKeys = ["RouteName", "Difficulty_YDS", "Difficulty_French", "Difficulty_ADL", "Severity", "Type",
                      "Height", "HeightUnits", "Pitches", "Grade", "Rating", "VoteCount", "Description", "Location",
                      "Protection", "FirstAscent", "FirstAscentYear", "FirstFreeAscent", "FirstFreeAscentYear"]
-        types = {"trad", "sport", "tr", "boulder", "ice", "aid", "mixed", "alpine"}
+        types = {"trad", "sport", "tr", "boulder", "ice", "aid", "mixed", "alpine", "snow"}
         severities = {"G", "PG", "PG13", "PG-13", "R", "X"}
         gradeMap = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5, "VI": 6, "VII": 7}
 
@@ -398,10 +398,19 @@ class MountainCleaner(object):
         else:
             ratingFrench = None
 
+        ratingsYDS = difficulty.find_all(class_="rateYDS")
+        if len(ratingsYDS) > 1:
+            ratingYDS2 = ratingsYDS[1]
+        else:
+            ratingYDS2 = None
+
         if difficultyChildren is not None:
             difficultyToRemove = set(chain(*[child.text.split() for child in difficultyChildren]))
         else:
-            difficultyToRemove = []
+            difficultyToRemove = set()
+
+        if ratingYDS2 is not None:
+            difficultyToRemove.remove(" ".join(word for word in ratingYDS2.text.split() if word.upper() != "YDS"))
 
         return {
             "YDS": ratingYDS,
@@ -567,13 +576,13 @@ if __name__ == "__main__":
         path = folder[0]
 
         areaCleaner = MountainCleaner(path + r"/Areas.json", "Areas", r"../data/Clean/")
-        routeCleaner = MountainCleaner(path + r"/Routes.json", "Routes", r"../data/Clean/")
+        routeCleaner = MountainCleaner(path + r"/Routes.json", "Routes", r"../data/Clean/Test/")
         ticksCleaner = MountainCleaner(path + r"/Stats.json", "Ticks", r"../data/Clean/test/")
         ratingsCleaner = MountainCleaner(path + r"/Stats.json", "Ratings", r"../data/Clean/")
         toDosCleaner = MountainCleaner(path + r"/Stats.json", "ToDos", r"../data/Clean/")
 
-        areaCleaner.clean()
+        # areaCleaner.clean()
         routeCleaner.clean()
-        ticksCleaner.clean()
-        ratingsCleaner.clean()
-        toDosCleaner.clean()
+        # ticksCleaner.clean()
+        # ratingsCleaner.clean()
+        # toDosCleaner.clean()
