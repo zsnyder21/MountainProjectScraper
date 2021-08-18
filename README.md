@@ -1,5 +1,15 @@
 # Mountain Project Scraper
 
+#### Table of Contents
+- [Mountain Project Scraper](#mountain-project-scraper)
+  * [Motivation](#motivation)
+  * [The Data](#the-data)
+  * [Statistical Analysis](#statistical-analysis)
+    + [Overall Tick Distributions](#overall-tick-distributions)
+    + [Onsight Tick Distributions](#onsight-tick-distributions)
+  * [Conclusions](#conclusions)
+  * [Future work](#future-work)
+
 ## Motivation
 Data is a great way to gain insight into many things. The goal of this project is to use data sourced from the climbing
 community to gain insights into the distributions of route completions, to-dos and average onsight/flash/redpoint
@@ -109,6 +119,9 @@ I found that I can confidently say that the average sport tick is greater than 6
 tick, and that the average sport onsight tick is greater than 4 grades higher than the average trad onsight tick.
 
 ## Future work
-I'd like to use the data collected here and create a climbing route recommender. See this 
+There are many more attributes of the data I would like to look into, including analyzing difficulties
+of route to-dos, location concentration of route ticks and to-dos being among them.
+
+In addition, I'd also like to use the data collected here and create a climbing route recommender. See this 
 <a href="https://github.com/zsnyder21/RockRouteRecommender" target="_blank" rel="noopener noreferrer">repository</a>
 for more details.
