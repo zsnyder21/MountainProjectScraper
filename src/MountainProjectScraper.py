@@ -54,7 +54,8 @@ class MountainScraper(object):
 						print(f"Took too long to load {pageURL}. Trying again...")
 
 				try:
-					commentCount = self.driver.find_element_by_class_name("comment-count")
+					# commentCount = self.driver.find_element_by_class_name("comment-count")
+					commentCount = self.driver.find_element(by=By.CLASS_NAME, value="comment-count")
 					hasComments = commentCount.text != "0 Comments"
 				except selenium.common.exceptions.NoSuchElementException as e:
 					print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
@@ -63,7 +64,8 @@ class MountainScraper(object):
 				if hasComments:
 					commentsFound = False
 					while not commentsFound:
-						html = self.driver.find_element_by_tag_name("html")
+						# html = self.driver.find_element_by_tag_name("html")
+						html = self.driver.find_element(by=By.TAG_NAME, value="html")
 						html.send_keys(Keys.END)
 
 						try:
@@ -100,7 +102,8 @@ class MountainScraper(object):
 					print(f"Took too long to load {pageURL}. Trying again...")
 
 			try:
-				commentCount = self.driver.find_element_by_class_name("comment-count")
+				# commentCount = self.driver.find_element_by_class_name("comment-count")
+				commentCount = self.driver.find_element(by=By.CLASS_NAME, value="comment-count")
 				hasComments = commentCount.text != "0 Comments"
 			except selenium.common.exceptions.NoSuchElementException as e:
 				print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
@@ -109,7 +112,8 @@ class MountainScraper(object):
 			if hasComments:
 				commentsFound = False
 				while not commentsFound:
-					html = self.driver.find_element_by_tag_name("html")
+					# html = self.driver.find_element_by_tag_name("html")
+					html = self.driver.find_element(by=By.TAG_NAME, value="html")
 					html.send_keys(Keys.END)
 
 					try:
@@ -189,7 +193,8 @@ class MountainScraper(object):
 							print(f"Took too long to load {pageURL}. Trying again...")
 
 					try:
-						commentCount = self.driver.find_element_by_class_name("comment-count")
+						# commentCount = self.driver.find_element_by_class_name("comment-count")
+						commentCount = self.driver.find_element(by=By.CLASS_NAME, value="comment-count")
 						hasComments = commentCount.text != "0 Comments"
 					except selenium.common.exceptions.NoSuchElementException as e:
 						print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
@@ -198,7 +203,8 @@ class MountainScraper(object):
 					if hasComments:
 						commentsFound = False
 						while not commentsFound:
-							html = self.driver.find_element_by_tag_name("html")
+							# html = self.driver.find_element_by_tag_name("html")
+							html = self.driver.find_element(by=By.TAG_NAME, value="html")
 							html.send_keys(Keys.END)
 
 							try:
@@ -244,7 +250,8 @@ class MountainScraper(object):
 					print(f"Took too long to load {pageURL}. Trying again...")
 
 			try:
-				commentCount = self.driver.find_element_by_class_name("comment-count")
+				# commentCount = self.driver.find_element_by_class_name("comment-count")
+				commentCount = self.driver.find_element(by=By.CLASS_NAME, value="comment-count")
 				hasComments = commentCount.text != "0 Comments"
 			except selenium.common.exceptions.NoSuchElementException as e:
 				print(f"We cannot locate a comment count element for page {pageURL}, likely due to access issues")
@@ -253,7 +260,8 @@ class MountainScraper(object):
 			if hasComments:
 				commentsFound = False
 				while not commentsFound:
-					html = self.driver.find_element_by_tag_name("html")
+					# html = self.driver.find_element_by_tag_name("html")
+					html = self.driver.find_element(by=By.TAG_NAME, value="html")
 					html.send_keys(Keys.END)
 
 					try:
@@ -312,5 +320,58 @@ class MountainScraper(object):
 
 
 if __name__ == "__main__":
-	scraper = MountainScraper()
+	areasToScrape = {
+		# "Alabama",
+		# "Alaska",
+		# "Arizona",
+		# "Arkansas",
+		"California",
+		"Connecticut",
+		"Delaware",
+		"Florida",
+		"Georgia",
+		"Hawaii",
+		"Idaho",
+		"Illinois",
+		"Indiana",
+		"Iowa",
+		"Kansas",
+		"Kentucky",
+		"Louisiana",
+		"Maine",
+		"Maryland",
+		"Massachusetts",
+		"Michigan",
+		"Minnesota",
+		"Mississippi",
+		"Missouri",
+		"Montana",
+		"Nebraska",
+		"Nevada",
+		"New Hampshire",
+		"New Jersey",
+		"New Mexico",
+		"New York",
+		"North Carolina",
+		"North Dakota",
+		"Ohio",
+		"Oklahoma",
+		"Oregon",
+		"Pennsylvania",
+		"Rhode Island",
+		"South Carolina",
+		"South Dakota",
+		"Tennessee",
+		"Texas",
+		"Utah",
+		"Vermont",
+		"Virginia",
+		"Washington",
+		"West Virginia",
+		"Wisconsin",
+		"Wyoming",
+		"International",
+		"* In Progress"
+	}
+	scraper = MountainScraper(outputDirectoryRoot="../data/20221214/Raw/", areasToScrape=areasToScrape)
 	scraper.scrape()
