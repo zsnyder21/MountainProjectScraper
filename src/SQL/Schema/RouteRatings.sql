@@ -4,11 +4,12 @@
 
 CREATE TABLE public.routeratings
 (
-    ratingid bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 632653867 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    ratingid bigint NOT NULL,
     routeid bigint NOT NULL,
     userid bigint,
     username character varying(128) COLLATE pg_catalog."default",
-    rating integer NOT NULL,
+    difficulty character varying(128) NOT NULL,
+    severity character varying(8),
     url character varying(256) COLLATE pg_catalog."default",
     CONSTRAINT "PK_RouteRatings" PRIMARY KEY (ratingid),
     CONSTRAINT "FK_RouteRatings_Routes" FOREIGN KEY (routeid)

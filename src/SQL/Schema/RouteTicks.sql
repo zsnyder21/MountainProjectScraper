@@ -4,7 +4,7 @@
 
 CREATE TABLE public.routeticks
 (
-    tickid bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 458763249 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
+    tickid bigint NOT NULL,
     routeid bigint NOT NULL,
     userid bigint,
     username character varying(128) COLLATE pg_catalog."default",

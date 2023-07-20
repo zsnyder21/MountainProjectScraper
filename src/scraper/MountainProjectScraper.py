@@ -1,21 +1,19 @@
-# MountainProjectScraper.py
-
-import os
-import requests
-import re
 import json
-
+import os
+import re
+import requests
 import selenium.common.exceptions
+
 from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 
-class MountainScraper(object):
+class MountainScraper:
 	def __init__(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./data/Raw/",
 				 areasToScrape: set[str] = None, useSubDirs: bool = True) -> None:
 		self.startingPage = startingPage if startingPage is not None else "https://www.mountainproject.com/route-guide"
@@ -28,7 +26,7 @@ class MountainScraper(object):
 
 		chrome_options = Options()
 		# chrome_options.add_argument("--headless")
-		self.driver = webdriver.Chrome(options=chrome_options)
+		self.driver = webdriver.Chrome(options=chrome_options, executable_path="../../chromedriver.exe")
 
 		os.makedirs(self.outputDirectoryRoot, exist_ok=True)
 
@@ -321,11 +319,12 @@ class MountainScraper(object):
 
 if __name__ == "__main__":
 	areasToScrape = {
-		# "Alabama",
-		# "Alaska",
-		# "Arizona",
-		# "Arkansas",
+		"Alabama",
+		"Alaska",
+		"Arizona",
+		"Arkansas",
 		"California",
+		"Colorado",
 		"Connecticut",
 		"Delaware",
 		"Florida",
@@ -373,5 +372,6 @@ if __name__ == "__main__":
 		"International",
 		"* In Progress"
 	}
-	scraper = MountainScraper(outputDirectoryRoot="../data/20221214/Raw/", areasToScrape=areasToScrape)
+
+	scraper = MountainScraper(outputDirectoryRoot="../../data/20230719/Raw/", areasToScrape=areasToScrape)
 	scraper.scrape()
