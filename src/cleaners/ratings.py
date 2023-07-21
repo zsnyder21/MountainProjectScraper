@@ -18,9 +18,6 @@ class RouteRatingsCleaner(MountainCleaner):
 
                 soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
-                # Note that this element has changed class since I scraped the data
-                # The new name appears to be
-                # "col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400 max-height-processed"
                 tables = soup.find_all(
                     class_="col-lg-2 col-sm-4 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
 

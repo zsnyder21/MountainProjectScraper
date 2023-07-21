@@ -288,13 +288,34 @@ class MountainScraper:
 			self.findRouteStats(route["RouteId"], route["URL"], route["ParentAreaId"])
 
 	def findRouteStats(self, routeId: int, url: str, parentAreaId: int) -> None:
-		url = url.replace("/route/", "/route/stats/")
+		pageURL = url.replace("/route/", "/route/stats/")
+		pageLoaded = False
+		tableFound = False
+		while not pageLoaded:
+			try:
+				self.driver.get(pageURL)
+				pageLoaded = True
+			except selenium.common.exceptions.TimeoutException as e:
+				print(f"Took too long to load {pageURL}. Trying again...")
+
+		while not tableFound:
+			try:
+				WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((
+					By.CLASS_NAME,
+					"onx-stats-table"
+				)))
+
+				tableFound = True
+			except selenium.common.exceptions.TimeoutException as e:
+				print(f"RouteId: {routeId}, URL: {pageURL} - could not find table element")
+				self.driver.refresh()
+
 		routeStats = [
 			{
 				"RouteId": routeId,
 				"ParentAreaId": parentAreaId,
-				"URL": url,
-				"HTML": requests.get(url).text
+				"URL": pageURL,
+				"HTML": self.driver.page_source
 			}
 		]
 
@@ -373,5 +394,5 @@ if __name__ == "__main__":
 		"* In Progress"
 	}
 
-	scraper = MountainScraper(outputDirectoryRoot="../../data/20230719/Raw/", areasToScrape=areasToScrape)
+	scraper = MountainScraper(outputDirectoryRoot="../../data/20230721/Raw/", areasToScrape=areasToScrape)
 	scraper.scrape()
