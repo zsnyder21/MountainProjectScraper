@@ -1,15 +1,15 @@
 import os
 from src.cleaners import getCleaner
 
-for idx, folder in enumerate(os.walk(r"../data/20230719/Raw")):
-    if idx < 1:
+for idx, folder in enumerate(os.walk(r"../data/20230721/Raw")):
+    if idx < 5:
         # First folder is root - skip it
         continue
 
     path = folder[0]
     fileMap = (
-        ("Areas", "Areas"),
-        ("Routes", "Routes"),
+        # ("Areas", "Areas"),
+        # ("Routes", "Routes"),
         ("Stats", "RouteStarRatings"),
         ("Stats", "RouteRatings"),
         ("Stats", "RouteToDos"),
@@ -20,7 +20,7 @@ for idx, folder in enumerate(os.walk(r"../data/20230719/Raw")):
     for file, dataType in fileMap:
         print("\t", f"{dataType}...")
         cleanerClass = getCleaner(dataType=dataType)
-        cleaner = cleanerClass(filePath=f"{path}/{file}.json", dataType=dataType, exportDir=r"../data/20230719/Clean")
+        cleaner = cleanerClass(filePath=f"{path}/{file}.json", dataType=dataType, exportDir=r"../data/20230721/Clean")
 
         cleaner.clean()
 

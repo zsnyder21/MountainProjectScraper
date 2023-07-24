@@ -18,31 +18,26 @@ class RouteToDosCleaner(MountainCleaner):
 
                 soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
-                # Note that this element has changed class since I scraped the data
-                # The new name appears to be
-                # "col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400 max-height-processed"
-                statsTables = soup.find_all(
-                    class_="col-lg-2 col-sm-4 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400"
-                )
+                tables = soup.find(class_="onx-stats-table").findChild("div").findChildren("div", recursive=False)
+                for toDosTable in tables:
+                    if "On To-Do Lists".upper() in toDosTable.find("h3").text.upper():
+                        break
 
-                for statTable in statsTables:
-                    if "On To-Do Lists".upper() in statTable.find("h3").text.upper():
-                        toDos = statTable.find_all("tr")
+                toDos = toDosTable.find_all("tr")
+                for toDo in toDos:
+                    userPage = toDo.find("a")
+                    if userPage is not None:
+                        userName = userPage.text
+                        userId = int(re.search(pattern=r"\d+", string=userPage["href"]).group(0))
+                    else:
+                        userName = None
+                        userId = None
 
-                        for toDo in toDos:
-                            userPage = toDo.find("a")
-                            if userPage is not None:
-                                userName = userPage.text
-                                userId = int(re.search(pattern=r"\d+", string=userPage["href"]).group(0))
-                            else:
-                                userName = None
-                                userId = None
+                    userToDo = {
+                        "RouteId": routeId,
+                        "UserId": userId,
+                        "UserName": userName,
+                        "URL": statsURL
+                    }
 
-                            userToDo = {
-                                "RouteId": routeId,
-                                "UserId": userId,
-                                "UserName": userName,
-                                "URL": statsURL
-                            }
-
-                            self.exportToJSON(userToDo, "RouteToDos")
+                    self.exportToJSON(userToDo, "RouteToDos")

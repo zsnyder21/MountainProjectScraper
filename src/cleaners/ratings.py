@@ -18,9 +18,7 @@ class RouteRatingsCleaner(MountainCleaner):
 
                 soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
-                tables = soup.find_all(
-                    class_="col-lg-2 col-sm-4 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
-
+                tables = soup.find(class_="onx-stats-table").findChild("div").findChildren("div", recursive=False)
                 for ratingTable in tables:
                     if "Suggested Ratings".upper() in ratingTable.find("h3").text.upper():
                         break
@@ -43,14 +41,20 @@ class RouteRatingsCleaner(MountainCleaner):
                     else:
                         severity = None
 
-                    userTick = {
-                        "RatingId": int(rating["id"].split(".")[1]),
-                        "RouteId": routeId,
-                        "UserId": userId,
-                        "UserName": userName,
-                        "Difficulty": difficulty,
-                        "Severity": severity,
-                        "URL": statsURL,
-                    }
+                    try:
+                        userTick = {
+                            "RatingId": int(rating["id"].split(".")[1]),
+                            "RouteId": routeId,
+                            "UserId": userId,
+                            "UserName": userName,
+                            "Difficulty": difficulty,
+                            "Severity": severity,
+                            "URL": statsURL,
+                        }
+                    except KeyError as e:
+                        print(routeId)
+                        print(rating)
+                        print()
+                        raise e
 
                     self.exportToJSON(userTick, "RouteRatings")

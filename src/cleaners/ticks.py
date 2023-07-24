@@ -18,14 +18,10 @@ class RouteTicksCleaner(MountainCleaner):
 
                 soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
-                # Note that this element has changed class since I scraped the data
-                # The new name appears to be
-                # "col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400 max-height-processed"
-                ticksTable = soup.find(
-                    class_="col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
-
-                if ticksTable is None:
-                    continue
+                tables = soup.find(class_="onx-stats-table").findChild("div").findChildren("div", recursive=False)
+                for ticksTable in tables:
+                    if "Ticks".upper() in ticksTable.find("h3").text.upper():
+                        break
 
                 ticks = ticksTable.find_all("tr")
                 for tick in ticks:

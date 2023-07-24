@@ -18,14 +18,10 @@ class RouteStarRatingsCleaner(MountainCleaner):
 
                 soup = BeautifulSoup(fileContents["HTML"], "html.parser")
 
-                # Note that this element has changed class since I scraped the data
-                # The new name appears to be
-                # "col-lg-6 col-sm-12 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400 max-height-processed"
-                ratingTable = soup.find(
-                    class_="col-lg-2 col-sm-4 col-xs-12 mt-2 max-height max-height-md-1000 max-height-xs-400")
-
-                if ratingTable is None or "Star Ratings".upper() not in ratingTable.find("h3").text.upper():
-                    continue
+                tables = soup.find(class_="onx-stats-table").findChild("div").findChildren("div", recursive=False)
+                for ratingTable in tables:
+                    if "Star Ratings".upper() in ratingTable.find("h3").text.upper():
+                        break
 
                 ratings = ratingTable.find_all("tr")
                 for rating in ratings:
