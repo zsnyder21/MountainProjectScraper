@@ -24,14 +24,17 @@ class MountainScraper:
 		self.useSubDirs = useSubDirs
 		self.parentAreas = list()
 
-		chrome_options = Options()
+		self.chromeOptions = Options()
 		# chrome_options.add_argument("--headless")
-		self.driver = webdriver.Chrome(options=chrome_options, executable_path="../../chromedriver.exe")
+		self.driver = webdriver.Chrome(options=self.chromeOptions, executable_path="../../chromedriver.exe")
+		self.pagesVisited = 0
+		self.pagesThreshold = 1000  # Instantiate new webdriver after this many pages have been visited
 
 		os.makedirs(self.outputDirectoryRoot, exist_ok=True)
 
 		if startingPage is None:
-			self.driver.get(self.startingPage)
+			self._visit(self.startingPage)
+			# self.driver.get(self.startingPage)
 			routeGuide = BeautifulSoup(requests.get(self.startingPage).text, "html.parser").find(id="route-guide")
 
 			for strong in routeGuide.find_all("strong"):
@@ -46,7 +49,8 @@ class MountainScraper:
 
 				while not pageLoaded:
 					try:
-						self.driver.get(pageURL)
+						self._visit(pageURL)
+						# self.driver.get(pageURL)
 						pageLoaded = True
 					except selenium.common.exceptions.TimeoutException as e:
 						print(f"Took too long to load {pageURL}. Trying again...")
@@ -94,7 +98,8 @@ class MountainScraper:
 
 			while not pageLoaded:
 				try:
-					self.driver.get(pageURL)
+					self._visit(pageURL)
+					# self.driver.get(pageURL)
 					pageLoaded = True
 				except selenium.common.exceptions.TimeoutException as e:
 					print(f"Took too long to load {pageURL}. Trying again...")
@@ -133,6 +138,21 @@ class MountainScraper:
 			}
 
 			self.parentAreas.append(pageInfo)
+
+	def _visit(self, url: str) -> None:
+		"""
+		Tells the webdriver to visit the supplied url
+
+		:param url: Url to tell the webdriver to visit
+		"""
+		if self.pagesVisited > self.pagesThreshold:
+			print("Refreshing driver...")
+			self.driver.quit()
+			self.driver = webdriver.Chrome(options=self.chromeOptions, executable_path="../../chromedriver.exe")
+			self.pagesVisited = 0
+
+		self.driver.get(url)
+		self.pagesVisited += 1
 
 	def scrape(self) -> None:
 		for area in self.parentAreas:
@@ -185,7 +205,8 @@ class MountainScraper:
 
 					while not pageLoaded:
 						try:
-							self.driver.get(pageURL)
+							self._visit(pageURL)
+							# self.driver.get(pageURL)
 							pageLoaded = True
 						except selenium.common.exceptions.TimeoutException as e:
 							print(f"Took too long to load {pageURL}. Trying again...")
@@ -242,7 +263,8 @@ class MountainScraper:
 
 			while not pageLoaded:
 				try:
-					self.driver.get(pageURL)
+					self._visit(pageURL)
+					# self.driver.get(pageURL)
 					pageLoaded = True
 				except selenium.common.exceptions.TimeoutException as e:
 					print(f"Took too long to load {pageURL}. Trying again...")
@@ -293,7 +315,8 @@ class MountainScraper:
 		tableFound = False
 		while not pageLoaded:
 			try:
-				self.driver.get(pageURL)
+				self._visit(pageURL)
+				# self.driver.get(pageURL)
 				pageLoaded = True
 			except selenium.common.exceptions.TimeoutException as e:
 				print(f"Took too long to load {pageURL}. Trying again...")
