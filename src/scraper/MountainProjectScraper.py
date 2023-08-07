@@ -14,21 +14,62 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 class MountainScraper:
-	def __init__(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./data/Raw/",
-				 areasToScrape: set[str] = None, useSubDirs: bool = True) -> None:
+	def __init__(self, webdriverExecutable: str = None) -> None:
+		self.webdriverExecutable = webdriverExecutable or "../../chromedriver.exe"
+		self.startingPage = None
+		self.outputDirectoryRoot = None
+		self.outputDirectory = None
+		self.areasToScrape = None
+		self.useSubDirs = None
+		self.areasScraped = set()
+		self.parentAreas = list()
+		self.implicitWaitTime = 10  # Seconds
+
+		self.chromeOptions = Options()
+		# chrome_options.add_argument("--headless")
+		self.driver = webdriver.Chrome(options=self.chromeOptions, executable_path=self.webdriverExecutable)
+		# self.driver.implicitly_wait(self.implicitWaitTime)
+		self.pagesVisited = 0
+		self.pagesThreshold = 1000  # Instantiate new webdriver after this many pages have been visited
+
+	def _visit(self, url: str) -> None:
+		"""
+		Tells the webdriver to visit the supplied url
+
+		:param url: Url to tell the webdriver to visit
+		"""
+		pageLoaded = False
+		while not pageLoaded:
+			if self.pagesVisited > self.pagesThreshold:
+				print("Refreshing driver...")
+				self.driver.quit()
+				self.driver = webdriver.Chrome(options=self.chromeOptions, executable_path=self.webdriverExecutable)
+				# self.driver.implicitly_wait(self.implicitWaitTime)
+				self.pagesVisited = 0
+
+			try:
+				self.driver.get(url)
+				pageLoaded = WebDriverWait(self.driver, self.implicitWaitTime).until(
+					lambda d: d.execute_script("return document.readyState") == "complete"
+				)
+			except selenium.common.exceptions.TimeoutException as e:
+				print(f"Refreshing because took too long to load {url}")
+				self.driver.refresh()
+
+			# Check that we didn't get a bad request or server error
+			if "502 Server Error" in self.driver.page_source or "Too Many Requests" in self.driver.page_source:
+				print(f"{url} responded too many requests for 502 server error - trying again")
+				pageLoaded = False
+
+			self.pagesVisited += 1
+
+	def setInitialState(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./data/Raw/",
+				 areasToScrape: set[str] = None, useSubDirs: bool = True):
 		self.startingPage = startingPage if startingPage is not None else "https://www.mountainproject.com/route-guide"
 		self.outputDirectoryRoot = outputDirectoryRoot
 		self.outputDirectory = outputDirectoryRoot
 		self.areasToScrape = areasToScrape
-		self.areasScraped = set()
 		self.useSubDirs = useSubDirs
-		self.parentAreas = list()
-
-		self.chromeOptions = Options()
-		# chrome_options.add_argument("--headless")
-		self.driver = webdriver.Chrome(options=self.chromeOptions, executable_path="../../chromedriver.exe")
-		self.pagesVisited = 0
-		self.pagesThreshold = 1000  # Instantiate new webdriver after this many pages have been visited
 
 		os.makedirs(self.outputDirectoryRoot, exist_ok=True)
 
@@ -71,7 +112,7 @@ class MountainScraper:
 						html.send_keys(Keys.END)
 
 						try:
-							WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+							WebDriverWait(self.driver, self.implicitWaitTime).until(EC.presence_of_element_located((By.XPATH,
 								"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
 
 							commentsFound = True
@@ -120,7 +161,7 @@ class MountainScraper:
 					html.send_keys(Keys.END)
 
 					try:
-						WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+						WebDriverWait(self.driver, self.implicitWaitTime).until(EC.presence_of_element_located((By.XPATH,
 							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
 
 						commentsFound = True
@@ -139,22 +180,17 @@ class MountainScraper:
 
 			self.parentAreas.append(pageInfo)
 
-	def _visit(self, url: str) -> None:
-		"""
-		Tells the webdriver to visit the supplied url
 
-		:param url: Url to tell the webdriver to visit
-		"""
-		if self.pagesVisited > self.pagesThreshold:
-			print("Refreshing driver...")
-			self.driver.quit()
-			self.driver = webdriver.Chrome(options=self.chromeOptions, executable_path="../../chromedriver.exe")
-			self.pagesVisited = 0
 
-		self.driver.get(url)
-		self.pagesVisited += 1
+	def scrape(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./data/Raw/",
+				 areasToScrape: set[str] = None, useSubDirs: bool = True) -> None:
+		self.setInitialState(
+			startingPage=startingPage,
+			outputDirectoryRoot=outputDirectoryRoot,
+			areasToScrape=areasToScrape,
+			useSubDirs=useSubDirs
+		)
 
-	def scrape(self) -> None:
 		for area in self.parentAreas:
 			currentAreaId = area["AreaId"]
 			soup = BeautifulSoup(area["HTML"], "html.parser")
@@ -227,7 +263,7 @@ class MountainScraper:
 							html.send_keys(Keys.END)
 
 							try:
-								WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+								WebDriverWait(self.driver, self.implicitWaitTime).until(EC.presence_of_element_located((By.XPATH,
 									"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
 
 								commentsFound = True
@@ -285,7 +321,7 @@ class MountainScraper:
 					html.send_keys(Keys.END)
 
 					try:
-						WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH,
+						WebDriverWait(self.driver, self.implicitWaitTime).until(EC.presence_of_element_located((By.XPATH,
 							"//div[@class='comments-body']/div[@class='comment-list']/table[@class='main-comment width100']")))
 
 						commentsFound = True
@@ -323,15 +359,28 @@ class MountainScraper:
 
 		while not tableFound:
 			try:
-				WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((
+				WebDriverWait(self.driver, self.implicitWaitTime).until(EC.presence_of_element_located((
 					By.CLASS_NAME,
 					"onx-stats-table"
 				)))
 
-				tableFound = True
+				# Try to wait until loading is done
+				# WebDriverWait(self.driver, 1).until_not(EC.presence_of_element_located((
+				# 	By.CLASS_NAME,
+				# 	"MuiCircularProgress-root MuiCircularProgress-indeterminate MuiCircularProgress-colorPrimary css-z01bqi"
+				# )))
+
+				# Once the stats are loaded, we will have exactly 4 elements indicating the number of
+				# star ratings, suggested ratings, on to-do lists, and ticks
+				statsTable = self.driver.find_element_by_class_name(name="onx-stats-table")
+				texts = statsTable.find_elements(by=By.XPATH, value="//div/div/div/h3/span[@class='small text-muted']")
+				tableFound = len(texts) == 4
+
 			except selenium.common.exceptions.TimeoutException as e:
 				print(f"RouteId: {routeId}, URL: {pageURL} - could not find table element")
 				self.driver.refresh()
+
+		print()
 
 		routeStats = [
 			{
@@ -363,10 +412,10 @@ class MountainScraper:
 
 if __name__ == "__main__":
 	areasToScrape = {
-		"Alabama",
-		"Alaska",
-		"Arizona",
-		"Arkansas",
+		# "Alabama",
+		# "Alaska",
+		# "Arizona",
+		# "Arkansas",
 		"California",
 		"Colorado",
 		"Connecticut",
@@ -417,5 +466,9 @@ if __name__ == "__main__":
 		"* In Progress"
 	}
 
-	scraper = MountainScraper(outputDirectoryRoot="../../data/20230721/Raw/", areasToScrape=areasToScrape)
-	scraper.scrape()
+	scraper = MountainScraper()
+	scraper.scrape(
+		outputDirectoryRoot="../../data/20230804/Raw/",
+		areasToScrape=areasToScrape,
+		startingPage=r"https://www.mountainproject.com/area/105746892/krishna-serenity-spire"
+	)

@@ -35,26 +35,24 @@ class RouteRatingsCleaner(MountainCleaner):
 
                     ratingInfos = rating.find_all("td")
                     suggestedRating = ratingInfos[-1].text.split()
+                    if len(suggestedRating) < 1:
+                        continue  # Unknown with empty rating - nothing to do
+
                     difficulty = suggestedRating[0]
+
                     if len(suggestedRating) > 1:
                         severity = suggestedRating[1]
                     else:
                         severity = None
 
-                    try:
-                        userTick = {
-                            "RatingId": int(rating["id"].split(".")[1]),
-                            "RouteId": routeId,
-                            "UserId": userId,
-                            "UserName": userName,
-                            "Difficulty": difficulty,
-                            "Severity": severity,
-                            "URL": statsURL,
-                        }
-                    except KeyError as e:
-                        print(routeId)
-                        print(rating)
-                        print()
-                        raise e
+                    userTick = {
+                        "RatingId": int(rating["id"].split(".")[1]),
+                        "RouteId": routeId,
+                        "UserId": userId,
+                        "UserName": userName,
+                        "Difficulty": difficulty,
+                        "Severity": severity,
+                        "URL": statsURL,
+                    }
 
                     self.exportToJSON(userTick, "RouteRatings")
