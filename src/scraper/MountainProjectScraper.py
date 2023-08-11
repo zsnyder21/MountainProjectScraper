@@ -5,6 +5,7 @@ import requests
 import selenium.common.exceptions
 
 from bs4 import BeautifulSoup
+from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -62,6 +63,10 @@ class MountainScraper:
 				pageLoaded = False
 
 			self.pagesVisited += 1
+
+	@staticmethod
+	def getCurrentTime() -> str:
+		return str(datetime.now())
 
 	def setInitialState(self, startingPage: any([None, str]) = None, outputDirectoryRoot: str = "./data/Raw/",
 				 areasToScrape: set[str] = None, useSubDirs: bool = True):
@@ -125,6 +130,7 @@ class MountainScraper:
 				pageInfo = {
 					"AreaId": areaId,
 					"ParentAreaId": parentAreaId,
+					"DateScraped": self.getCurrentTime(),
 					"URL": pageURL,
 					"HTML": pageHTML
 				}
@@ -174,6 +180,7 @@ class MountainScraper:
 			pageInfo = {
 				"AreaId": areaId,
 				"ParentAreaId": parentAreaId,
+				"DateScraped": self.getCurrentTime(),
 				"URL": pageURL,
 				"HTML": pageHTML
 			}
@@ -276,6 +283,7 @@ class MountainScraper:
 					pageInfo = {
 						"AreaId": areaId,
 						"ParentAreaId": currentAreaId,
+						"DateScraped": self.getCurrentTime(),
 						"URL": pageURL,
 						"HTML": pageHTML
 					}
@@ -334,6 +342,7 @@ class MountainScraper:
 			pageInfo = {
 				"RouteId": routeId,
 				"ParentAreaId": parentAreaId,
+				"DateScraped": self.getCurrentTime(),
 				"URL": pageURL,
 				"HTML": pageHTML
 			}
@@ -349,6 +358,7 @@ class MountainScraper:
 		pageURL = url.replace("/route/", "/route/stats/")
 		pageLoaded = False
 		tableFound = False
+		allStatsLoaded = False
 		while not pageLoaded:
 			try:
 				self._visit(pageURL)
@@ -364,12 +374,6 @@ class MountainScraper:
 					"onx-stats-table"
 				)))
 
-				# Try to wait until loading is done
-				# WebDriverWait(self.driver, 1).until_not(EC.presence_of_element_located((
-				# 	By.CLASS_NAME,
-				# 	"MuiCircularProgress-root MuiCircularProgress-indeterminate MuiCircularProgress-colorPrimary css-z01bqi"
-				# )))
-
 				# Once the stats are loaded, we will have exactly 4 elements indicating the number of
 				# star ratings, suggested ratings, on to-do lists, and ticks
 				statsTable = self.driver.find_element_by_class_name(name="onx-stats-table")
@@ -380,13 +384,41 @@ class MountainScraper:
 				print(f"RouteId: {routeId}, URL: {pageURL} - could not find table element")
 				self.driver.refresh()
 
-		print()
+		totalRows = sum(int(text.text.replace(",", "")) for text in texts)
+		buttons = {
+			"sc-jSUZER DReUW": None,
+			"sc-gswNZR exFoxa": None,
+			"sc-gKPRtg bEeJli": None,
+			"sc-bcXHqe ZOkfO": None
+		}
+
+		while not allStatsLoaded:
+			statsTable = self.driver.find_element_by_class_name(name="onx-stats-table")
+			html = self.driver.find_element(by=By.TAG_NAME, value="html")
+			html.send_keys(Keys.END)
+
+			for buttonId in buttons:
+				try:
+					buttons[buttonId] = statsTable.find_element(by=By.XPATH, value=f"//div/div/div/div[@class='{buttonId}']/button[@type='button']")
+				except selenium.common.exceptions.NoSuchElementException as e:
+					buttons[buttonId] = None
+
+			for buttonId, button in buttons.items():
+				if buttons[buttonId] is not None and button.is_enabled():
+					try:
+						button.send_keys(Keys.ENTER)
+					except selenium.common.exceptions.ElementNotInteractableException as e:
+						pass
+
+			rowsFound = len(statsTable.find_elements(by=By.TAG_NAME, value="tr"))
+			allStatsLoaded = rowsFound == totalRows
 
 		routeStats = [
 			{
 				"RouteId": routeId,
 				"ParentAreaId": parentAreaId,
 				"URL": pageURL,
+				"DateScraped": self.getCurrentTime(),
 				"HTML": self.driver.page_source
 			}
 		]
@@ -395,27 +427,26 @@ class MountainScraper:
 
 	def exportToJSON(self, data: list[dict], dataType: str) -> None:
 		if dataType.upper() == "Area".upper():
-			file = open(self.outputDirectory + "Areas.json", "a")
+			fileName = self.outputDirectory + "Areas.json"
 		elif dataType.upper() == "Route".upper():
-			file = open(self.outputDirectory + "Routes.json", "a")
+			fileName = self.outputDirectory + "Routes.json"
 		elif dataType.upper() == "Stats".upper():
-			file = open(self.outputDirectory + "Stats.json", "a")
+			fileName = self.outputDirectory + "Stats.json"
 		else:
 			return
 
-		for jsonData in data:
-			jsonContent = json.dumps(jsonData, indent=None, separators=(",", ":"))
-			print(jsonContent, file=file)
-
-		file.close()
+		with open(fileName, "a") as file:
+			for jsonData in data:
+				jsonContent = json.dumps(jsonData, indent=None, separators=(",", ":"))
+				print(jsonContent, file=file)
 
 
 if __name__ == "__main__":
 	areasToScrape = {
-		# "Alabama",
-		# "Alaska",
-		# "Arizona",
-		# "Arkansas",
+		"Alabama",
+		"Alaska",
+		"Arizona",
+		"Arkansas",
 		"California",
 		"Colorado",
 		"Connecticut",
@@ -468,7 +499,7 @@ if __name__ == "__main__":
 
 	scraper = MountainScraper()
 	scraper.scrape(
-		outputDirectoryRoot="../../data/20230804/Raw/",
+		outputDirectoryRoot="../../data/20230810/Raw/",
 		areasToScrape=areasToScrape,
-		startingPage=r"https://www.mountainproject.com/area/105746892/krishna-serenity-spire"
+		# startingPage=r"https://www.mountainproject.com/area/105833490/middle-cathedral-rock"
 	)
